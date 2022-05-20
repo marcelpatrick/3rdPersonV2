@@ -18,35 +18,25 @@ On File click on Refresh Virtual Studio Code project.
 ## 1.2: Main Character Blueprints
 
 In Unreal, select the c++ class and click on Create a new blueprint based on "this class", name it "BP_ShooterCharacter".
-Inside the BP, View Port > Details > Static Mesh: select which static mesh you are going to use to physically represent your player in the world.
-Adjust the camera and the spring arm, camera and projectile spawn point position.
-In BP, View Port > Details > Rendering > disable player hidden in game.
+- Inside the BP, View Port > Details > Static Mesh: select which static mesh you are going to use to physically represent your player in the world.
+- Add a camera and a spring arm component (+AddComponent), attach the camera to the spring arm and adjust its position.
+- In BP, View Port > Details > Rendering > disable player hidden in game.
 
-## 1.3: Declare Component Variables:
-In its header file initialize and expose the variables that will correspond to each of the components that we will use in the world.
-
-```cpp
- 
-```
-
-## 1.4: Construct Component Objects:
-In the cpp file, Construct these components so that they are able to ve visible in our world
-
-```cpp
- 
-```
-
-## 1.5: Create our own GameMode BP class
+## 1.3: Create our own GameMode BP class
 
 In Unreal, Create a new BP class inheriting from GameMode Base: BP_ShooterGameMode
 Inside the BP, Details, Classes, Default Pawn Class, select our main character BP.
 In Unreal, Blueprints, GameMode, Select GameMode base class, select our BP_ShooterGameMode class.
 
 
-# 3: Player Input: 
+# 2: Create Sub-Components: (Gun Component)
 
 
-## 3.1: Settup an axis mapping for movement and an action mapping for firing  
+
+
+# 2: Player Input: 
+
+## 2.1: Settup an axis mapping for movement and an action mapping for firing  
 
 - Unreal > Edit > Project Settings > Input > Bindings > Axis Mapping / Action Mapping
 - Click add and create one axis mapping function Move to move forwards and backwards: assign one key for forwards with value +1 and one key for backwards with value -1.
@@ -54,7 +44,9 @@ In Unreal, Blueprints, GameMode, Select GameMode base class, select our BP_Shoot
 - Also create one function Turn for turning left and right and look left and right and assign its respective keys with respective values
 - Click add and create one action mapping function for fire and for jump and assign a key to it.
 
-## 3.2: Bind the axis / action mapping to our action callback functions
+## 2.2: Bind the axis / action mapping to our action callback functions
+
+### 2.2.1: Movement actions
 
 - In the header file, Declare the Move() and Turn() and Fire() funtions.
 - Include Speed and Turn Rate variables to fine tune the player's movements.
@@ -70,9 +62,10 @@ In Unreal, Blueprints, GameMode, Select GameMode base class, select our BP_Shoot
   float RotationRate = 10;
 ```
 
-- Inside SetupPlayerInputComponent() bind each user input axis or action mapping to its correspondent action callback functions
-- Define the action callback functions to Move forward, move right and shoot 
+- Bind each user input axis or action mapping to its correspondent action callback functions and create the default call back functions for move forward and move right
+- Define the action callback functions to Move forward, move right and shoot
 
+In ShooterCharacter.cpp
 ```cpp
  // Called to bind functionality to input
 void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -112,10 +105,9 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 		this, /*target context*/
 		&ACharacter::Jump /*Address of the movement function to be called: already inherited from ACharacter so we don't need to implement it here*/
 		); 
-
-	//PlayerInputComponent->BindAction(TEXT("Shoot"), EInputEvent::IE_Pressed, this, &AShooterCharacter::Shoot);
-	InputComponent->BindAction("Shoot", IE_Pressed, this, &AShooterCharacter::Shoot);
-
+		
+		//PlayerInputComponent->BindAction(TEXT("Shoot"), EInputEvent::IE_Pressed, this, &AShooterCharacter::Shoot);
+		InputComponent->BindAction("Shoot", IE_Pressed, this, &AShooterCharacter::Shoot);
 }
 
 
@@ -137,34 +129,12 @@ void AShooterCharacter::Shoot()
 }
 ```
 
-- In unreal > select BP_PawnPlayer > Collision > CapsuleComp > collision presets > set to physicsActor 
+
+
 - In unreal > select BP_PawnPlayer > physics > set simulate physics off for both the CapsuleComponent and the BaseMesh
 - Make sure you move the capsule and the base mesh a little above the ground so that they don't get stuck in the terrain
 
-## 3.3: Fire Function:
 
-- For the player to fire a projectile, we need it to spawn a projectile object from the projectile spawn point. 
-- To do this, the Fire() function needs to call a projectile C++ class but this C++ class needs to connect to a blueprint with a mesh so that it can spawn a real object in the world. 
-- To make this connection (Reflection) between a C++ class on code and an Unreal Blueprint we need to use a UClass() - Unreal Class - from the type of the object we want to spawn.
-- This UClass() will be inside the player C++ code, and will connect to the Projectile blueprint when gets called by the Fire() function.
-- To Declare a UClass() we need to use a TSubclassOf<> template function.
-- Had we not used UClass() it would only spawn an object based on a raw c++ class which could not contain a static mesh. 
-
-Mouse click > Binding > Fire() > projectile UClass > BP_Projectile > spawn projectile mesh in the world
-
-- In BasePawn.h, Declare the action callback function Fire(). 
-- Then use TSubclassOf<> template function to declare a UClass() of type AProjectile.
-
-```cpp
- 
-```
-
-- In the BP_PawnCowPlayer blueprint > Details > Combat > Projectile Class set BP_Projectile as the ProjectileClass to be spawned by the Player.
-- Do the same thing in BP_PawnCowEnemy blueprint.
-
-Define the action callback function Fire() in BasePawn.cpp - because this one will be inherited by both the Player and the Enemy actors.
-```cpp
- 
-``` 
+# 3: Player Animation
 
 
