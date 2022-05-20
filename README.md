@@ -50,7 +50,7 @@ In Unreal, Blueprints, GameMode, Select GameMode base class, select our BP_Shoot
 
 - Unreal > Edit > Project Settings > Input > Bindings > Axis Mapping / Action Mapping
 - Click add and create one axis mapping function Move to move forwards and backwards: assign one key for forwards with value +1 and one key for backwards with value -1.
-- Click add and create one axis mapping function LookUp: assign one key to look up (mouse Y) with value +1 - don't need to asign another with -1.
+- Click add and create one axis mapping function LookUp: assign one key to look up (mouse Y) with value -1.
 - Also create one function Turn for turning left and right and look left and right and assign its respective keys with respective values
 - Click add and create one action mapping function for fire and for jump and assign a key to it.
 
