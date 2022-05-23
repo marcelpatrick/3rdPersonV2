@@ -31,6 +31,32 @@ In Unreal, Blueprints, GameMode, Select GameMode base class, select our BP_Shoot
 
 # 2: Create Sub-Components: (Gun Component)
 
+- Create a c++ gun component of actor type. 
+- Create a BP subclass based on this c++ class: BP_Rifle
+- Add components in the Gun actor: Root and Mesh attached to the root
+- Select a mesh component for the type of gun
+
+## 2.1: Attach the rifle component to our character component in the scene:
+
+- Spawn rifle component be shown close to our actor mesh
+- Hide the gun that is already there: hide the weapon bone: 
+- Attach scene component (BP_Rifle) to the socked of the ShooterCharacter skeleton mesh
+- Asign the owner for the rifle to be the shooter character
+
+Header file
+'''cpp
+private: 
+	UPROPERTY(EditDefaultsOnly) /*so that no one can edit it at run time*/
+	//To Spawn an object in the world from C++ we need to connect the C++ code to the Unreal Blueprint that contains the object's mesh. To do this we use TSubclassOf<>.
+		//TSubclassOf<> makes the connection between the C++ code and the blueprint. (Reflection)
+	//Use TSubclassOf<> to declare a variable that represents the type of the class of the object we want to spawn in the world
+	TSubclassOf<AGun> GunClass;
+
+	UPROPERTY()
+	//Declare an instance of the class (pointer) Gun for us to store our Gun variable
+	AGun* Gun;
+'''
+
 
 
 
