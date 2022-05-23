@@ -44,7 +44,7 @@ In Unreal, Blueprints, GameMode, Select GameMode base class, select our BP_Shoot
 - Asign the owner for the rifle to be the shooter character
 
 Header file
-'''cpp
+```cpp
 private: 
 	UPROPERTY(EditDefaultsOnly) /*so that no one can edit it at run time*/
 	//To Spawn an object in the world from C++ we need to connect the C++ code to the Unreal Blueprint that contains the object's mesh. To do this we use TSubclassOf<>.
@@ -55,8 +55,27 @@ private:
 	UPROPERTY()
 	//Declare an instance of the class (pointer) Gun for us to store our Gun variable
 	AGun* Gun;
-'''
+```
 
+cpp
+```cpp
+void AShooterCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	//Spawn the rifle component from our actor component at run time
+	Gun = GetWorld()->SpawnActor<AGun>(GunClass); //Then select the BP_Rifle as the GunClass Mesh in our BP_ShotterCharacter
+	
+	//Hide the gun that is currently there
+	GetMesh()->HideBoneByName(TEXT("weapon_r"), EPhysBodyOp::PBO_None); //Then, in the Skeleton asset, add a new socket
+	
+	//Attach the new gun to the actor's hand
+	Gun->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("WeaponSocket"));
+	
+	//Set up the gun to have this class as its owner. allows the gun actor to know that the ShooterCharacter is its owner. Useful to assign who is generating damage by shooting which gun. 
+	Gun->SetOwner(this);
+}
+```
 
 
 
