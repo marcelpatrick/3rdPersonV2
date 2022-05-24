@@ -184,7 +184,7 @@ void AShooterCharacter::Shoot()
 - Create an Animation Blueprint: In Unreal, Add new > Animation > Animation Blueprint > select target skeleton > select that of our character (wraith) > call it ABP_ShooterCharacter
 - in BP_ShooterCharacter > Details > Animation > Anim Class > select our own custom animation blueprint: ABP_ShooterCharacter
 
-## 3.3.1: Set the blueprint logic
+## 3.3.1: Set the blueprint logic for character movement
 
 in ABP_ShooterCharacter > Event Graph:
 
@@ -196,6 +196,19 @@ Use Try Get Pawn Owner to get the pawn object (BP_ShooterCharacter) and get info
 	- InverseTransformDirection: velocity is in global space and we should convert it to local space in order to get the angle (direction) to which the player should be going
 	- RotationFromXVector: set the yawn to know how far it is turning to the right or left. (Right click on Return Value, select "split struct pin" to get only the return for the yaw.
 
+Use Event Blueprint Update Animation to get update information on the pawn movements
+
+- Set the character's aim: 
+TryGetPawnOwner > GetControlRotation / GetActorRotation > Delta (Rotator): return valueY > SetAimPitch
+EventBlueprintUpdateAnimation > ?IsValid > Sequence > Execution > SetAimPitch
+	-  Delta (Rotator): control rotation is global. we need to find the delta distance btw the actor's rotation and the global control rotation
+
+- Set Jump movement, check whether the character is jumping or falling
+TryGetPawnOwner > CastToCharacter > IsFalling > (create an IsAirBorne bool) > SetIsAirBorne
+EventBlueprintUpdateAnimation > ?IsValid > Sequence > Execution > SetIsAirBorne
+
+ 
+(FALTOU CONNECTAR NA BLUEPRINT NODE DO ISDEAD PQ AINDA TEM QUE CRIAR FUNÇAO ISDEAD NO CPP - SEÇÃO HEALTH COMPONENTS)
 
 
 
