@@ -192,9 +192,9 @@ Use Try Get Pawn Owner to get the pawn object (BP_ShooterCharacter) and get info
 
 - Set Speed: TryGetPawnOwner >  GetVelocity > VectorLength > SetSpeed
 - Set Angle: TryGetPawnOwner > GetActorTransform / GetVelocity > InverseTransformDirection > RotationFromXVector > SetAngle
--- GetActorTransform: transform to rotate the pawn by indicating where the pawn is in the world
--- InverseTransformDirection: velocity is in global space and we should convert it to local space in order to get the angle (direction) to which the player should be going
--- RotationFromXVector: set the yawn to know how far it is turning to the right or left. (Right click on Return Value, select "split struct pin" to get only the return for the yaw.
+ - GetActorTransform: transform to rotate the pawn by indicating where the pawn is in the world
+ - InverseTransformDirection: velocity is in global space and we should convert it to local space in order to get the angle (direction) to which the player should be going
+ - RotationFromXVector: set the yawn to know how far it is turning to the right or left. (Right click on Return Value, select "split struct pin" to get only the return for the yaw.
 
 
 
