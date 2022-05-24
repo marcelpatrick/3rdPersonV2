@@ -29,7 +29,7 @@ Inside the BP, Details, Classes, Default Pawn Class, select our main character B
 In Unreal, Blueprints, GameMode, Select GameMode base class, select our BP_ShooterGameMode class.
 
 
-# 2: Create Sub-Components: (Gun Component)
+# 2: Create Sub-Components: Gun Component
 
 - Create a c++ gun component of actor type. 
 - Create a BP subclass based on this c++ class: BP_Rifle
@@ -74,14 +74,15 @@ void AShooterCharacter::BeginPlay()
 	
 	//Set up the gun to have this class as its owner. allows the gun actor to know that the ShooterCharacter is its owner. Useful to assign who is generating damage by shooting which gun. 
 	Gun->SetOwner(this);
+	
+	//Then go to Unreal, set the rifle in the right position in the world copy the location coordinates, then open BP_Rifle and paste the coordinates in the mesh component
 }
 ```
 
 
+# 3: Player Input: 
 
-# 2: Player Input: 
-
-## 2.1: Settup an axis mapping for movement and an action mapping for firing  
+## 3.1: Settup an axis mapping for movement and an action mapping for firing  
 
 - Unreal > Edit > Project Settings > Input > Bindings > Axis Mapping / Action Mapping
 - Click add and create one axis mapping function Move to move forwards and backwards: assign one key for forwards with value +1 and one key for backwards with value -1.
@@ -89,9 +90,9 @@ void AShooterCharacter::BeginPlay()
 - Also create one function Turn for turning left and right and look left and right and assign its respective keys with respective values
 - Click add and create one action mapping function for fire and for jump and assign a key to it.
 
-## 2.2: Bind the axis / action mapping to our action callback functions
+## 3.2: Bind the axis / action mapping to our action callback functions
 
-### 2.2.1: Movement actions
+### 3.2.1: Movement actions
 
 - In the header file, Declare the Move() and Turn() and Fire() funtions.
 - Include Speed and Turn Rate variables to fine tune the player's movements.
@@ -174,12 +175,88 @@ void AShooterCharacter::Shoot()
 }
 ```
 
-
-
 - In unreal > select BP_PawnPlayer > physics > set simulate physics off for both the CapsuleComponent and the BaseMesh
 - Make sure you move the capsule and the base mesh a little above the ground so that they don't get stuck in the terrain
 
 
-# 3: Player Animation
+# 3.3: Player Animation 
+
+- Create an Animation Blueprint: In Unreal, Add new > Animation > Animation Blueprint > select target skeleton > select that of our character (wraith) > call it ABP_ShooterCharacter
+- in BP_ShooterCharacter > Details > Animation > Anim Class > select our own custom animation blueprint: ABP_ShooterCharacter
+
+## 3.3.1: Set the blueprint logic
+
+in ABP_ShooterCharacter > Event Graph:
+
+Use Try Get Pawn Owner to get the pawn object (BP_ShooterCharacter) and get info from the pawn about its movement.
+
+- Set Speed: TryGetPawnOwner >  GetVelocity > VectorLength > SetSpeed
+- Set Angle: TryGetPawnOwner > GetActorTransform / GetVelocity > InverseTransformDirection > RotationFromXVector > SetAngle
+-- GetActorTransform: transform to rotate the pawn by indicating where the pawn is in the world
+-- InverseTransformDirection: velocity is in global space and we should convert it to local space in order to get the angle (direction) to which the player should be going
+-- RotationFromXVector: set the yawn to know how far it is turning to the right or left. (Right click on Return Value, select "split struct pin" to get only the return for the yaw.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
