@@ -309,10 +309,56 @@ AController* AGun::GetOwnerController() const
 }
 ```
 
+- in Gun.cpp, Call the GunTrace() function from inside the PullTrigger() function and asign the result to a bool
 
+```cpp
+void AGun::PullTrigger()
+{
+	FHitResult Hit;
+	FVector ShotDirection;
+	bool bSuccess = GunTrace(Hit, ShotDirection);
+} 
+```
 
+## 5.2: Send Damage to the player
 
+- Include another BP_ShooterCharacter into the world. Unreal will automatically make this second actor AI controlled 
+- Inside Gun c++:
+	- Get a DamageEvent 
+	- Get a hold of the actor we will damage
+	- Call TakeDamage function
 
+Gun.cpp
+```cpp
+void AGun::PullTrigger()
+{
+	if (bSuccess)
+	{
+		//Then include the impact effect in BP_Rifle
+
+		AActor* HitActor = Hit.GetActor();
+
+		//Get the actor to be damaged
+		if (Hit.GetActor() != nullptr)
+		{
+			AController* Instigator = Cast<AController>(HitActor->GetInstigator()); 
+
+			//Apply Damange
+			FPointDamageEvent DamageEvent(Damage, Hit, ShotDirection, nullptr); //this last param allows to define a specifit TSubclassOf UDamageType, but since we are not using it we will just pass a nullptr
+			
+			AController* OwnerController = GetOwnerController();
+
+			HitActor->TakeDamage(
+				Damage, 
+				DamageEvent, 
+				OwnerController /*the controller of this pawn is also the instigator of the applyed damaged*/,
+			 	this); 
+		}
+	}
+}
+```
+
+ *** PAREI EM VIRTUAL METHODS IN C++ ****
 
 
 
