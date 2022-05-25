@@ -185,17 +185,6 @@ public:
 	AGun();
 
 	void PullTrigger();
-	
-private:
-	UPROPERTY(EditAnywhere)
-	float MaxRange = 1000;
-
-	UPROPERTY(EditAnywhere)
-	float Damage = 10;
-
-	bool GunTrace(FHitResult& Hit, FVector& ShotDirection);
-
-	AController* GetOwnerController() const;
 ```
 
 Gun.cpp
@@ -256,8 +245,69 @@ EventBlueprintUpdateAnimation > ?IsValid > Sequence > Execution > SetIsAirBorne
 
 # 5. Actions and Events: Hit Events, Health Component, Apply Damage
 
+## 5.1: Set Gun Line tracing
 
+- In order to hit and damange something we need to define which is the line trace that the bullet will do after it is shoot so that we can define what targets were in reach and which got actually hit. 
+- So in Gun c++ :
+	- Set player view point
+	- Set line trace by channel
 
+Gun.h
+```cpp
+private:
+	bool GunTrace(FHitResult& Hit, FVector& ShotDirection);
+
+	AController* GetOwnerController() const;
+```
+
+Gun.cpp
+```cpp
+bool AGun::GunTrace(
+	FHitResult& Hit, /*a hit result out param (will be modified by this function), with an & because it is a reference to this variable's address*/
+	FVector& ShotDirection /*a shot direction out param (will be modified by this function)*/
+	)
+{
+	AController* OwnerController = GetOwnerController();
+
+	if (OwnerController == nullptr) return false;
+
+	FVector Location; //Line trace start point
+	FRotator Rotation;
+
+	OwnerController->GetPlayerViewPoint(Location, Rotation); //Location and Rotation are out parameters because are being modified inside this function
+
+	//Get where the shot was coming from, which is the oposite of the shot direction coming our of the gun
+	ShotDirection = - Rotation.Vector();
+
+	//Create a line trace for the bullet that tells us which object it has hit
+
+	//Create an endpoint for our line trace
+		//End point of a vector = Start point + range of the vector * direction of the vector
+	FVector End = Location + Rotation.Vector() * MaxRange;
+
+	//Define actors that should be ignore by the gun line tracing so that we don't shoot ourselves and pass these as params in the line trace method below
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(this);
+	Params.AddIgnoredActor(GetOwner());
+
+	//Line trace by channel makes the system search through this line and define which types of object can block our bullet and which can't
+		//Set our custom trace channel in Project Settings > Collision > Trace Channels > define presets to define interaction with each type of objects
+		//Fetch the enum of the collision channel for our bullet in Project Folder > Config > Default Engine > search for the name of the custom collision channel we crated, "Bullet" and see which channel was asigned to it
+	return GetWorld()->LineTraceSingleByChannel(Hit, Location, End, ECollisionChannel::ECC_GameTraceChannel1, Params);
+}
+
+AController* AGun::GetOwnerController() const
+{
+	//Get the viewpoint of the player. need to get the player controller from the gun owner
+		//Gun owner is an actor so we need to cast it to APawn (because our shooter character inherits from APawn)
+	APawn* OwnerPawn = Cast<APawn>(GetOwner());
+
+	if (OwnerPawn == nullptr) return nullptr;
+
+	//Get the controller for the gun owner
+	return OwnerPawn->GetController();
+}
+```
 
 
 
