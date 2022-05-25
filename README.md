@@ -1,12 +1,13 @@
 # 3rdPersonV2
 
 # Project Steps:
-1. Create Components (Parent Classes)
-2. Create Sub-Components (Child Classes: Tank, Tower, Projectile)
-3. Player Input (Moving the Actor, Firing)
-4. Actions and Events (Hit Events, Health Component, Apply Damage)
-5. Game Rules, Game Mode and Game Controller (Game Cycle: Start > Death > Winning, Loosing > End)
-6. Special Effects (Sounds, Particles)
+1. Create Components: Parent Classes
+2. Create Sub-Components: Child Classes
+3. Player Input: Moving the Actor, Firing
+4. Player Animation
+5. Actions and Events: Hit Events, Health Component, Apply Damage
+6. Game Rules, Game Mode and Game Controller (Game Cycle: Start > Death > Winning, Loosing > End)
+7. Special Effects (Sounds, Particles)
 
 
 # 1: Create Components
@@ -179,6 +180,12 @@ void AShooterCharacter::MoveRight(float AxisValue)
 
 Gun.h
 ```cpp
+public:	
+	// Sets default values for this actor's properties
+	AGun();
+
+	void PullTrigger();
+	
 private:
 	UPROPERTY(EditAnywhere)
 	float MaxRange = 1000;
@@ -195,79 +202,7 @@ Gun.cpp
 ```cpp
 void AGun::PullTrigger()
 {
-	FHitResult Hit;
-	FVector ShotDirection;
-	bool bSuccess = GunTrace(Hit, ShotDirection);
-
-	if (bSuccess)
-	{
-		//Then include the impact effect in BP_Rifle
-
-		AActor* HitActor = Hit.GetActor();
-
-		//Get the actor to be damaged
-		if (Hit.GetActor() != nullptr)
-		{
-			AController* Instigator = Cast<AController>(HitActor->GetInstigator()); 
-
-			//Apply Damange
-			FPointDamageEvent DamageEvent(Damage, Hit, ShotDirection, nullptr); //this last param allows to define a specifit TSubclassOf UDamageType, but since we are not using it we will just pass a nullptr
-			
-			AController* OwnerController = GetOwnerController();
-
-			HitActor->TakeDamage(
-				Damage, 
-				DamageEvent, 
-				OwnerController /*the controller of this pawn is also the instigator of the applyed damaged*/,
-			 	this); 
-		}
-	}
-}
-
-bool AGun::GunTrace(
-	FHitResult& Hit, /*a hit result out param (will be modified by this function), with an & because it is a reference to this variable's address*/
-	FVector& ShotDirection /*a shot direction out param (will be modified by this function)*/
-	)
-{
-	AController* OwnerController = GetOwnerController();
-
-	if (OwnerController == nullptr) return false;
-
-	FVector Location; //Line trace start point
-	FRotator Rotation;
-
-	OwnerController->GetPlayerViewPoint(Location, Rotation); //Location and Rotation are out parameters because are being modified inside this function
-
-	//Get where the shot was coming from, which is the oposite of the shot direction coming our of the gun
-	ShotDirection = - Rotation.Vector();
-
-	//Create a line trace for the bullet that tells us which object it has hit
-
-	//Create an endpoint for our line trace
-		//End point of a vector = Start point + range of the vector * direction of the vector
-	FVector End = Location + Rotation.Vector() * MaxRange;
-
-	//Define actors that should be ignore by the gun line tracing so that we don't shoot ourselves and pass these as params in the line trace method below
-	FCollisionQueryParams Params;
-	Params.AddIgnoredActor(this);
-	Params.AddIgnoredActor(GetOwner());
-
-	//Line trace by channel makes the system search through this line and define which types of object can block our bullet and which can't
-		//Set our custom trace channel in Project Settings > Collision > Trace Channels > define presets to define interaction with each type of objects
-		//Fetch the enum of the collision channel for our bullet in Project Folder > Config > Default Engine > search for the name of the custom collision channel we crated, "Bullet" and see which channel was asigned to it
-	return GetWorld()->LineTraceSingleByChannel(Hit, Location, End, ECollisionChannel::ECC_GameTraceChannel1, Params);
-}
-
-AController* AGun::GetOwnerController() const
-{
-	//Get the viewpoint of the player. need to get the player controller from the gun owner
-		//Gun owner is an actor so we need to cast it to APawn (because our shooter character inherits from APawn)
-	APawn* OwnerPawn = Cast<APawn>(GetOwner());
-
-	if (OwnerPawn == nullptr) return nullptr;
-
-	//Get the controller for the gun owner
-	return OwnerPawn->GetController();
+	UE_Log(LogTemp, Warning, TEXT("You have pulled the trigger"));
 }
 ```
 
@@ -287,12 +222,12 @@ void AShooterCharacter::Shoot()
 }
 ```
 
-# 3.3: Player Animation 
+# 4: Player Animation 
 
 - Create an Animation Blueprint: In Unreal, Add new > Animation > Animation Blueprint > select target skeleton > select that of our character (wraith) > call it ABP_ShooterCharacter
 - in BP_ShooterCharacter > Details > Animation > Anim Class > select our own custom animation blueprint: ABP_ShooterCharacter
 
-## 3.3.1: Set the blueprint logic for character movement
+## 4.1: Set the blueprint logic for character movement
 
 in ABP_ShooterCharacter > Event Graph:
 
@@ -318,6 +253,8 @@ EventBlueprintUpdateAnimation > ?IsValid > Sequence > Execution > SetIsAirBorne
 ![image](https://user-images.githubusercontent.com/12215115/170245151-18316618-b9a5-4017-9e07-7052556f03cb.png)
  
 (FALTOU CONNECTAR NA BLUEPRINT NODE DO ISDEAD PQ AINDA TEM QUE CRIAR FUNÇAO ISDEAD NO CPP - SEÇÃO HEALTH COMPONENTS)
+
+# 5. Actions and Events: Hit Events, Health Component, Apply Damage
 
 
 
