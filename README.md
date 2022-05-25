@@ -207,6 +207,7 @@ EventBlueprintUpdateAnimation > ?IsValid > Sequence > Execution > SetAimPitch
 TryGetPawnOwner > CastToCharacter > IsFalling > (create an IsAirBorne bool) > SetIsAirBorne
 EventBlueprintUpdateAnimation > ?IsValid > Sequence > Execution > SetIsAirBorne
 
+![image](https://user-images.githubusercontent.com/12215115/170245151-18316618-b9a5-4017-9e07-7052556f03cb.png)
  
 (FALTOU CONNECTAR NA BLUEPRINT NODE DO ISDEAD PQ AINDA TEM QUE CRIAR FUNÇAO ISDEAD NO CPP - SEÇÃO HEALTH COMPONENTS)
 
