@@ -425,11 +425,24 @@ public:
 	float GetHealthPercent() const;
 ```
 
+ShooterCharacter.cpp
+```cpp
+bool AShooterCharacter::IsDead() const
+{
+	return Health <= 0;	
+}
+```
+
 
 ### 5.4.2: Hook up Death and Health function to our animation BP
 
+- In Unreal, ABP_ShooterCharacter, Event Graph, create a IsDead bool and hook it up to our animation graph
+- TryGetPawnOwner > CastToShooterCharacter (get pawn owner and cast it to a ShooterCharacter) > IsDead (call function from ShooterCharacter.cpp) > Set IsDead 
+
+![image](https://user-images.githubusercontent.com/12215115/170482459-d6fbb0c0-76bd-4524-b5af-62cf1afc59f6.png)
 
 
+# ITERATION 2: ENEMIES AND AI
 
 
 
