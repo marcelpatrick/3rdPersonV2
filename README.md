@@ -407,6 +407,28 @@ float AShooterCharacter::TakeDamage(float DamageAmount, struct FDamageEvent cons
 }
 ```
 
+## 5.4: Death / Health Components
+
+### 5.4.1: Death Function and Health in c++
+
+ShooterCharecter.h
+```cpp
+public:	
+	// Create a function that can be accessed from the character blueprint - BlueprintPure and const function
+		//a pure node is a node that doesn't have an execution pin - doesn't have any effect on the thing that it is calling, only on its result
+		//every time we call this function it is going to have the same effect on the program and output the same result
+		//It doesn't change anything globally. the only impact it has are the outputs that it produces.
+	UFUNCTION(BlueprintPure)
+	bool IsDead() const;
+
+	UFUNCTION(BlueprintPure)
+	float GetHealthPercent() const;
+```
+
+
+### 5.4.2: Hook up Death and Health function to our animation BP
+
+
 
 
 
