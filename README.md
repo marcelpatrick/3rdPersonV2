@@ -240,8 +240,7 @@ TryGetPawnOwner > CastToCharacter > IsFalling > (create an IsAirBorne bool) > Se
 EventBlueprintUpdateAnimation > ?IsValid > Sequence > Execution > SetIsAirBorne
 
 ![image](https://user-images.githubusercontent.com/12215115/170245151-18316618-b9a5-4017-9e07-7052556f03cb.png)
- 
-(FALTOU CONNECTAR NA BLUEPRINT NODE DO ISDEAD PQ AINDA TEM QUE CRIAR FUNÇAO ISDEAD NO CPP - SEÇÃO HEALTH COMPONENTS)
+
 
 # 5. Actions and Events: Hit Events, Health Component, Apply Damage
 
@@ -444,6 +443,7 @@ bool AShooterCharacter::IsDead() const
 
 # ITERATION 2: ENEMIES AND AI
 
+ *** PAREI: Create and Setup AI Controller
 
 
 
