@@ -326,7 +326,7 @@ void AGun::PullTrigger()
 - Inside Gun c++:
 	- Get a DamageEvent 
 	- Get a hold of the actor we will damage
-	- Call TakeDamage function
+	- Call the custom TakeDamage() function that Gun is inheriting from the parent actor class
 
 Gun.cpp
 ```cpp
@@ -358,9 +358,54 @@ void AGun::PullTrigger()
 }
 ```
 
- *** PAREI EM VIRTUAL METHODS IN C++ ****
+## 5.3: Receive Damage to the player
 
+- Create our own custom TakeDamage() function overriding the custom TakeDamage() function from the Actor class so that we can receive this damage in our custom actor. Store damage inside the actor and not in its own component. 
+	- Set initial health in begin play
+	- Define our custom TakeDamage()
 
+ShooterCharacter.h
+```cpp
+public:
+	//Include a function for the character to receive damage and override the equivalent virtual function TakeDamage in the Actor parent class
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+	
+private:
+	UPROPERTY(EditDefaultsOnly)
+	float MaxHealth = 100;
+
+	UPROPERTY(VisibleAnywhere)
+	float Health;
+```
+
+ShooterCharacter.cpp
+```cpp
+void AShooterCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	//get total health
+	Health = MaxHealth;
+}
+
+float AShooterCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser)
+{
+	//since we are overriding a function, before we should call the parent method to make sure we inherit all the other behaviors we don't want to override
+		// The inherited TakeDamage() function returns a damage amount which we will store inside our DamageToApply variable to be able to manipulate it the way we want inside our custom TakeDamage() function
+	float DamageToApply = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	//if whatever health left is smaller than DamageToApply decreasing health by DamageToApply will give us a negative number. 
+		//to avoid this we want to: if DamageToApply is smaller then the Health left, then we decrease by DamageToApply, if the Health left is smaller than DamageToApply, then we decrease by the amount of Health that is left
+		//Use whichever is smaller and assign it to DamageToApply
+	DamageToApply = FMath::Min(Health, DamageToApply);
+
+	Health -= DamageToApply;
+
+	UE_LOG(LogTemp, Warning, TEXT("Your current Health is %f"), Health);
+	
+	return DamageToApply;
+}
+```
 
 
 
