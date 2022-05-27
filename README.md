@@ -10,6 +10,9 @@
 7. Special Effects (Sounds, Particles)
 
 
+# ITERATION 1: MAIN PLAYER
+
+
 # 1: Create Components
 
 ## 1.1: Main Character C++ class
@@ -443,9 +446,69 @@ bool AShooterCharacter::IsDead() const
 
 # ITERATION 2: ENEMIES AND AI
 
- *** PAREI: Create and Setup AI Controller
 
+# 1: Create Components
 
+- Include a new BP_ShooterCharacter in the world to be our enemy
+- Create a new BP class derived from BP_ShooterCharacter to be our BP_PlayerShooterCharacter, our main player.
+- Create a new AI Controller class, name ShooterAIController. 
+- Create e new BP to be child from the ShooterAIController class: BP_ShooterAIController
+- In Unreal, open BP_ShooterCharacter > details > Pawn > AIController Class > choose BP_ShooterAIController
+
+# 2: Player Input: AI Aiming, AI firing, AI movement
+
+- Set AI Path finder: create a mesh to tell the AI where in the world it can navigate
+	- In Unreal: Window > Place actors > Nav Mesh Bounds Volume > drag it into the world and put it through the floor
+	- In Unreal, in the world screen > Show > check Navigation
+	- Increase nav mesh X and Y sizes to encompass the entire level
+
+## 2.1: Behavior Tree
+
+- Set a behavior tree to control character movement
+- Add New > Artificial Intelligence > Behavior tree and Blackboard : "BT_EnemyAI", "BB_EnemyAI"
+- Declare the AIController component on c++
+- Get hold of the pawn actor
+
+ShooterAIController.h
+```cpp
+UCLASS()
+class SIMPLESHOOTER_API AShooterAIController : public AAIController
+{
+	GENERATED_BODY()
+protected:
+	virtual void BeginPlay() override;
+
+private:
+	//Declare a behavior tree variable
+	UPROPERTY(EditAnywhere)
+	class UBehaviorTree* AIBehavior;
+}
+```
+
+ShooterAIController.cpp
+```cpp
+void AShooterAIController::BeginPlay()
+{
+    Super::BeginPlay();
+
+    //Run our Behavior tree
+        //allows us to set a logic sequence of behavior for our AI
+        //Then set it up inside BP_ShooterAIcontroller > Shooter AI Controller > AIBehavior
+    if (AIBehavior != nullptr)
+    {
+        RunBehaviorTree(AIBehavior);
+
+        //Set a new key in BB_EnemyAI > AI Blackboard to store data on players location in begin play
+            //Blackboard is like the memory of the AI. Stores variables you input from the game. sets properties that stores information of the world. 
+                //and the behavior tree reads the blackboard variables to decide what actions is going to do next
+       
+        //Get Player pawn
+        APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0); 
+    }
+}
+```
+
+- Hook up our behavior tree to BP_ShooterAIController: in Unreal > BP_ShooterAIController > Details > AIBehavior > select BT_EnemyAI
 
 
 
