@@ -464,7 +464,7 @@ bool AShooterCharacter::IsDead() const
 
 ## 2.1: Behavior Tree
 
-- Set a behavior tree to control character movement
+## 2.1.1: Set a behavior tree to control character movement
 - Add New > Artificial Intelligence > Behavior tree and Blackboard : "BT_EnemyAI", "BB_EnemyAI"
 - Declare the AIController component on c++
 - Get hold of the pawn actor
@@ -509,6 +509,45 @@ void AShooterAIController::BeginPlay()
 ```
 
 - Hook up our behavior tree to BP_ShooterAIController: in Unreal > BP_ShooterAIController > Details > AIBehavior > select BT_EnemyAI
+
+### 2.1.2: Set player location at begin play defining a vector variable
+
+- Define the vector var in c++
+
+ShooterAIController.cpp
+```cpp
+void AShooterAIController::BeginPlay()
+{
+        //Set the AI initial locaiton for the variable in the Blackboard
+        GetBlackboardComponent()->SetValueAsVector(TEXT("StartLocation"), GetPawn()->GetActorLocation()); 
+        //Add a new vector variable inside BB_EnemyAI > Blackboard and give it the same name as given inside this function
+    }
+}
+```
+
+### 2.1.2: Define the vector variables on Blackboard
+
+- Create a vector variable for PlayerLocation: Blackboard details > key > key type > Vector > rename : PlayerLocation
+- Create a vector variable for StartLocation
+
+### 2.1.3: Build the behavior trees nodes
+
+- After Root, include a SELECTOR to shift between behavior nodes and include a SERVICE to Update the Player Location in the AI location memory (PlayerLocation) var
+only if the player is seen but the AI
+
+ *** BT SERVICES IN C++:
+ 
+ 
+ 
+ 
+
+ *** BT DECORATORS AND SELECTORS: Can see player? > Chase > investigate > last know player location
+
+ *** CUSTOM BTTASKS IN C++: CUSTOM TASK: Clear blackboard value
+ 
+ *** EXECUTING BTTASKS: Move to start location
+ 
+ *** BT TASKS THAT USE THE PAWN
 
 
 
