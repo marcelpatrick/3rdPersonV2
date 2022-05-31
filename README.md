@@ -595,6 +595,8 @@ void UBTService_PlayerLocationIfSeen::TickNode(UBehaviorTreeComponent& OwnerComp
 }
  ```
  
+ - In BT_EnemyAI > BehaviorTree: right click on the SELECTOR > add service > select our custom service "Player Location If Seen"
+ - In BT_EnemyAI > BehaviorTree: details > blackboard key > select: PlayerLocation variable
 
  *** BT DECORATORS AND SELECTORS: Can see player? > Chase > investigate > last know player location
 
