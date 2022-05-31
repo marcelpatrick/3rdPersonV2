@@ -537,8 +537,63 @@ only if the player is seen but the AI
 
  *** BT SERVICES IN C++:
  
+ - Create a new BTService class: In Unreal > Add New > New C++ class > show all classes > BTService_BlackboardBase: call it BTService_PlayerLocationIfSeen
+ - Implement the Tick function
  
+ BTService_PlayerLocationIfSeen.h
+ ```cpp
+ class SIMPLESHOOTER_API UBTService_PlayerLocationIfSeen : public UBTService_BlackboardBase
+{
+	GENERATED_BODY()
+
+public:
+	//Constructor
+	UBTService_PlayerLocationIfSeen();
+
+protected:
+	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
+	
+};
+ ```
  
+  BTService_PlayerLocationIfSeen.cpp
+ ```cpp
+ UBTService_PlayerLocationIfSeen::UBTService_PlayerLocationIfSeen()
+{
+    NodeName = "Update Player Location If Seen";
+}
+
+//update next tick interval if the code passes through this node in the behavior tree
+void UBTService_PlayerLocationIfSeen::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
+{
+    Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
+
+    APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+
+    if (PlayerPawn == nullptr)
+    {
+        return;
+    }
+
+    if(OwnerComp.GetAIOwner() == nullptr)
+    { 
+        return;
+    }
+
+    //If the AI can see the player
+    if (OwnerComp.GetAIOwner()->LineOfSightTo(PlayerPawn))
+    {
+        //Then get and update the current player location by following it's actor object (pawn)
+        OwnerComp.GetBlackboardComponent()->SetValueAsObject(GetSelectedBlackboardKey(), PlayerPawn); 
+    }
+    else
+    {
+        //If AI cannot see the player clear the player location from it's memory
+        OwnerComp.GetBlackboardComponent()->ClearValue(GetSelectedBlackboardKey());
+    }
+//In our behavior tree, include this service in the Selector node and change the variable BlackboardKey to "LastKnownPlayerLocation"
+}
+ ```
  
 
  *** BT DECORATORS AND SELECTORS: Can see player? > Chase > investigate > last know player location
