@@ -455,19 +455,17 @@ bool AShooterCharacter::IsDead() const
 - Create e new BP to be child from the ShooterAIController class: BP_ShooterAIController
 - In Unreal, open BP_ShooterCharacter > details > Pawn > AIController Class > choose BP_ShooterAIController
 
-# 2: Player Input: AI Aiming, AI firing, AI movement
+# 2: Player Input: AI Aiming, AI firing, AI movement (with Behavior Trees)
 
 - Set AI Path finder: create a mesh to tell the AI where in the world it can navigate
 	- In Unreal: Window > Place actors > Nav Mesh Bounds Volume > drag it into the world and put it through the floor
 	- In Unreal, in the world screen > Show > check Navigation
 	- Increase nav mesh X and Y sizes to encompass the entire level
 
-## 2.1: Behavior Tree
-
-## 2.1.1: Set a behavior tree to control character movement
-- Add New > Artificial Intelligence > Behavior tree and Blackboard : "BT_EnemyAI", "BB_EnemyAI"
-- Declare the AIController component on c++
-- Get hold of the pawn actor
+## 2.1: Set a behavior tree to control character movement
+	- Add New > Artificial Intelligence > Behavior tree and Blackboard : "BT_EnemyAI", "BB_EnemyAI"
+	- Declare the AIController component in c++
+	- Get hold of the pawn actor in c++
 
 ShooterAIController.h
 ```cpp
@@ -510,7 +508,7 @@ void AShooterAIController::BeginPlay()
 
 - Hook up our behavior tree to BP_ShooterAIController: in Unreal > BP_ShooterAIController > Details > AIBehavior > select BT_EnemyAI
 
-### 2.1.2: Set player location at begin play defining a vector variable
+## 2.2: Set player location at begin play defining a vector variable
 
 - Define the vector var in c++
 
@@ -525,17 +523,20 @@ void AShooterAIController::BeginPlay()
 }
 ```
 
-### 2.1.2: Define the vector variables on Blackboard
+### 2.3: Define the vector variables on Blackboard
 
 - Create a vector variable for PlayerLocation: Blackboard details > key > key type > Vector > rename : PlayerLocation
 - Create a vector variable for StartLocation
 
-### 2.1.3: Build the behavior trees nodes
+### 2.4: Build the behavior trees nodes
 
-- After Root, include a SELECTOR to shift between behavior nodes and include a SERVICE to Update the Player Location in the AI location memory (PlayerLocation) var
-only if the player is seen but the AI
+- Logic: If AI sees player, run towards him. If it doesn't, investigate moving to the player's last know location
 
- *** BT SERVICES IN C++:
+#### 2.4.1: If AI sees player, updated player location in the AI memory
+
+- In BT_EnemyAI, Behavior Tree section, After Root, include a SELECTOR to shift between behavior nodes and include a SERVICE to Update the Player Location in the AI location memory (PlayerLocation) var only if the player is seen by the AI
+	- SELECTOR runs all behaviors in the tree until the first one succeeds. Moves through the ones that fail. Stops when succeeds. Performs only one task (the first that is viable)
+	- SEQUENCE runs all behaviors until one of the fails. Runs all behaviors that succeed. Stops when fails. Performs all tasks that are viable.
  
  - Create a new BTService class: In Unreal > Add New > New C++ class > show all classes > BTService_BlackboardBase: call it BTService_PlayerLocationIfSeen
  - Implement the Tick function
@@ -598,7 +599,22 @@ void UBTService_PlayerLocationIfSeen::TickNode(UBehaviorTreeComponent& OwnerComp
  - In BT_EnemyAI > BehaviorTree: right click on the SELECTOR > add service > select our custom service "Player Location If Seen"
  - In BT_EnemyAI > BehaviorTree: details > blackboard key > select: PlayerLocation variable
 
+#### 2.4.2: Chase Player
+
  *** BT DECORATORS AND SELECTORS: Can see player? > Chase > investigate > last know player location
+ 
+ - After the selector > Add a new sequence called Chase 
+ - Right click on the Chase sequence > Add a decorator of type Blackboard > call it "Can See Player?" > in details > Blackboard > key query = is set > blackboard key = PlayerLocation
+ 	- Blackboard condition node: only executes the sequence based on a condition related to a blackboard variable. 
+ - Add a new Move To node after Chase > in details > blackboard > blackboard key = PlayerLocation
+
+ 
+ #### 2.4.3: Investigate
+ 
+  - After the selector > Add a new sequence called Investigate 
+  - Add a new vector variable on the Blackboard section called LastKnownPlayerLocation
+  - Add a new Move To node after Investigate > in details > blackboard > blackboard key = LastKnownPlayerLocation
+  - Click on the "Can See Player" Blackboard decorator > In details > flow control > observer aborts > select both : it aborts both the nodes in the selector (Chase and Investigate) in case something fails.
 
  *** CUSTOM BTTASKS IN C++: CUSTOM TASK: Clear blackboard value
  
