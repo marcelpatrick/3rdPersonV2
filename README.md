@@ -527,6 +527,7 @@ void AShooterAIController::BeginPlay()
 
 - Create a vector variable for PlayerLocation: Blackboard details > key > key type > Vector > rename : PlayerLocation
 - Create a vector variable for StartLocation
+- Add a new vector variable on the Blackboard section called LastKnownPlayerLocation
 
 ### 2.4: Build the behavior trees nodes
 
@@ -600,19 +601,15 @@ void UBTService_PlayerLocationIfSeen::TickNode(UBehaviorTreeComponent& OwnerComp
  - In BT_EnemyAI > BehaviorTree: details > blackboard key > select: PlayerLocation variable
 
 #### 2.4.2: Chase Player
-
- *** BT DECORATORS AND SELECTORS: Can see player? > Chase > investigate > last know player location
  
  - After the selector > Add a new sequence called Chase 
  - Right click on the Chase sequence > Add a decorator of type Blackboard > call it "Can See Player?" > in details > Blackboard > key query = is set > blackboard key = PlayerLocation
  	- Blackboard condition node: only executes the sequence based on a condition related to a blackboard variable. 
  - Add a new Move To node after Chase > in details > blackboard > blackboard key = PlayerLocation
-
  
  #### 2.4.3: Investigate
  
   - After the selector > Add a new sequence called Investigate 
-  - Add a new vector variable on the Blackboard section called LastKnownPlayerLocation
   - Add a new Move To node after Investigate > in details > blackboard > blackboard key = LastKnownPlayerLocation
   - Click on the "Can See Player" Blackboard decorator > In details > flow control > observer aborts > select both : it aborts both the nodes in the selector (Chase and Investigate) in case something fails.
 
