@@ -540,6 +540,7 @@ void AShooterAIController::BeginPlay()
 	- SEQUENCE runs all behaviors until one of the fails. Runs all behaviors that succeed. Stops when fails. Performs all tasks that are viable.
  
  - Create a new BTService class: In Unreal > Add New > New C++ class > show all classes > BTService_BlackboardBase: call it BTService_PlayerLocationIfSeen
+ 	- BTService_BlackboardBase is a custom service that allows us to refer to the variables or keys we included in the Blackboard
  - Implement the Tick function
  
  BTService_PlayerLocationIfSeen.h
@@ -604,21 +605,58 @@ void UBTService_PlayerLocationIfSeen::TickNode(UBehaviorTreeComponent& OwnerComp
  
  - After the selector > Add a new sequence called Chase 
  - Right click on the Chase sequence > Add a decorator of type Blackboard > call it "Can See Player?" > in details > Blackboard > key query = is set > blackboard key = PlayerLocation
- 	- Blackboard condition node: only executes the sequence based on a condition related to a blackboard variable. 
+ 	- Blackboard condition node: only executes the sequence based on a condition related to a blackboard variable: if PlayerLocation is set
  - Add a new Move To node after Chase > in details > blackboard > blackboard key = PlayerLocation
  
  #### 2.4.3: Investigate
  
+ - if LastKnowPlayer location is set (if AI saw where player was last) then walk there to investigate, AND THEN, clear LastKnowPlayer location from memory, forget about where he was last.
+ 
   - After the selector > Add a new sequence called Investigate 
   - Add a new Move To node after Investigate > in details > blackboard > blackboard key = LastKnownPlayerLocation
   - Click on the "Can See Player" Blackboard decorator > In details > flow control > observer aborts > select both : it aborts both the nodes in the selector (Chase and Investigate) in case something fails.
+  -  Right click on the Investigate sequence > Add a decorator of type Blackboard > call it "has Investigated?" > in details > Blackboard > key query = is set > blackboard key = LastKnowPlayerLocation
 
  *** CUSTOM BTTASKS IN C++: CUSTOM TASK: Clear blackboard value
  
+  #### 2.4.3.1: Custom Taks: Clear Blackboard Value
+  
+ - Create a new BTTask class: In Unreal > Add New > New C++ class > show all classes > BTTask_BlackboardBase: call it BTTask_ClearBlackboardValue
+ 	- BTTask_BlackboardBase is a custom Task that allows us to refer to the variables or keys we included in the Blackboard
+ - In Visual Studio, open SimpleShooter.Build.cs, inside the PublicDependencyModuleNames.AddRange function, add "GameplayTasks" to the list and compile
+
+- Create a public constructor
+BTTask_ClearBlackboardValue.h
+```cpp
+public:
+	//Constructor of this class
+	UMyBTTask_ClearBlackboardValue();
+```
+
+- define the name of this node
+BTTask_ClearBlackboardValue.cpp
+```cpp
+//allows us to clear any variable in the blackboard. will clear last know location so that the AI goes back to the initial position if he does not see me
+
+UMyBTTask_ClearBlackboardValue::UMyBTTask_ClearBlackboardValue()
+{
+    NodeName = TEXT("Clear Blackboard Value");
+}
+```
+
+- in Unreal > BT_EnemyAI > pull a new node after Investigate > select our custom task Clear Blackboard Value > in details > Blackboard > Blackboard key > select LastKnownPlayerLocation
+- pull another new node after Investigate > Wait
+  
+  
  *** EXECUTING BTTASKS: Move to start location
  
  *** BT TASKS THAT USE THE PAWN
 
+ #### 2.4.4: Move back to the initial location
+ 
+ - After has investigated, move back to its initial position.
+ 
+ - After selector > add a Move To node and selext StartLocation as a variable on the blackboard (blackboard key)
 
 
 
