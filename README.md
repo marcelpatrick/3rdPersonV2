@@ -601,36 +601,44 @@ void UBTService_PlayerLocationIfSeen::TickNode(UBehaviorTreeComponent& OwnerComp
  - In BT_EnemyAI > BehaviorTree: right click on the SELECTOR > add service > select our custom service "Player Location If Seen"
  - In BT_EnemyAI > BehaviorTree: details > blackboard key > select: PlayerLocation variable
 
-#### 2.4.2: Chase Player
+#### 2.4.2: Can See Player ? > Chase Player
  
  - After the selector > Add a new sequence called Chase 
  - Right click on the Chase sequence > Add a decorator of type Blackboard > call it "Can See Player?" > in details > Blackboard > key query = is set > blackboard key = PlayerLocation
  	- Blackboard condition node: only executes the sequence based on a condition related to a blackboard variable: if PlayerLocation is set
  - Add a new Move To node after Chase > in details > blackboard > blackboard key = PlayerLocation
+ - in Details > Blackboard > check Observer Blackboard value
  
- #### 2.4.3: Investigate
+ #### 2.4.3: Has Investigated? > Investigate
  
- - if LastKnowPlayer location is set (if AI saw where player was last) then walk there to investigate, AND THEN, clear LastKnowPlayer location from memory, forget about where he was last.
+ - Go to where the player was seen last. if LastKnowPlayer location is set (if AI saw where player was last) then walk there to investigate.
  
   - After the selector > Add a new sequence called Investigate 
   - Add a new Move To node after Investigate > in details > blackboard > blackboard key = LastKnownPlayerLocation
   - Click on the "Can See Player" Blackboard decorator > In details > flow control > observer aborts > select both : it aborts both the nodes in the selector (Chase and Investigate) in case something fails.
   -  Right click on the Investigate sequence > Add a decorator of type Blackboard > call it "has Investigated?" > in details > Blackboard > key query = is set > blackboard key = LastKnowPlayerLocation
-
- *** CUSTOM BTTASKS IN C++: CUSTOM TASK: Clear blackboard value
  
   #### 2.4.3.1: Custom Taks: Clear Blackboard Value
+  
+ - Forget about where the player was last and move back to the initial position. Clear LastKnowPlayer location from memory.
   
  - Create a new BTTask class: In Unreal > Add New > New C++ class > show all classes > BTTask_BlackboardBase: call it BTTask_ClearBlackboardValue
  	- BTTask_BlackboardBase is a custom Task that allows us to refer to the variables or keys we included in the Blackboard
  - In Visual Studio, open SimpleShooter.Build.cs, inside the PublicDependencyModuleNames.AddRange function, add "GameplayTasks" to the list and compile
 
 - Create a public constructor
+- Implement the Execute Task which we are going to use to access memory variables on Blackboard from our code and then clear the one related to LastKnowPlayerLocation
+	- Tasks are types of behavior we can assign to a specific node inside a behavior tree. There are 4 types of tasks: ExecuteTask, AbortTask, TickTask, OnMessage
+
 BTTask_ClearBlackboardValue.h
 ```cpp
 public:
 	//Constructor of this class
 	UMyBTTask_ClearBlackboardValue();
+	
+protected:
+	//protected because this function is in the default section
+	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 ```
 
 - define the name of this node
@@ -642,25 +650,100 @@ UMyBTTask_ClearBlackboardValue::UMyBTTask_ClearBlackboardValue()
 {
     NodeName = TEXT("Clear Blackboard Value");
 }
+
+//"Execute task": do this function when the task starts executing
+EBTNodeResult::Type UMyBTTask_ClearBlackboardValue::ExecuteTask(
+    UBehaviorTreeComponent& OwnerComp, /*access our behavior tree component*/
+    uint8* NodeMemory /*access the memory pointer that stores info about the node of one particular tree*/
+    )
+{
+    //Call Super because we are overriding the parent class with our custom functionality that we will define here (but we still need to implement all other functionalities from the parente class)
+    Super::ExecuteTask(OwnerComp, NodeMemory);
+
+    //Get hold of our blackboard and clear the variable for the selected key
+        //Get the key for the variable of this decision tree node
+    OwnerComp.GetBlackboardComponent()->ClearValue(GetSelectedBlackboardKey());
+
+    //return that this nodes result so that the decision tree takes the next action based on that, in this case, succeeded
+    return EBTNodeResult::Succeeded;
+}
 ```
 
 - in Unreal > BT_EnemyAI > pull a new node after Investigate > select our custom task Clear Blackboard Value > in details > Blackboard > Blackboard key > select LastKnownPlayerLocation
 - pull another new node after Investigate > Wait
-  
-  
- *** EXECUTING BTTASKS: Move to start location
+
+ ### 2.4.4: Move back to the initial location
+ 
+ - in Unreal > in BT_EnemyAI > After the SELECTOR node > pull a new MoveTo node > select StartLocation as a variable / Blackboard Key 
  
  *** BT TASKS THAT USE THE PAWN
 
- #### 2.4.4: Move back to the initial location
- 
- - After has investigated, move back to its initial position.
- 
- - After selector > add a Move To node and selext StartLocation as a variable on the blackboard (blackboard key)
+  ### 2.4.5: Shoot
+  
+  - In Unreal > Add New > New C++ class > select BTTaskNode > rename to BTTask_Shoot
+  - Implement the BTTask_Shooter constructor
+  - Implement the ExecuteTask to get hold of the AI Controller and the AI Pawn, pass it in a Character variable, and them call the Shoot() method from this variable
+  - Inside ShooterCharacter.h, make the Shoot() method public to allow it to be called from outside of this class
+
+in BTTask_Shoot.h
+```cpp
+public:
+
+	//Contructor
+	UBTTask_Shoot();
+
+protected:
+
+	//Execution
+	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent &OwnerComp, uint8 *NodeMemory) override;
+```
+
+in BTTask_Shoot.cpp
+```cpp
+//Constructor
+UBTTask_Shoot::UBTTask_Shoot()
+{
+    NodeName = TEXT("Shoot");
+}
+
+//Define the execute task - that is what this custom task is going to do
+EBTNodeResult::Type UBTTask_Shoot::ExecuteTask(
+    UBehaviorTreeComponent &OwnerComp, /* Address to access our behavior tree component*/
+    uint8 *NodeMemory /* memory pointer that stores info about this tree node*/
+    )
+{
+    Super::ExecuteTask(OwnerComp, NodeMemory);
+
+    //Get hold of AI controller and then our pawn - get the Shoot() method from ShooterCharacter
+        //go to shooter character and make the Shoot() method public to be accessed from outside of the class
+
+    //if owner component is null return that this custom task has failed
+    if (OwnerComp.GetAIOwner() == nullptr)
+    {
+        EBTNodeResult::Failed;
+    }
+    
+    
+    AShooterCharacter* Character = Cast<AShooterCharacter>(OwnerComp.GetAIOwner()->GetPawn());
+
+    if (Character == nullptr)
+    {
+        return EBTNodeResult::Failed;
+    }
+    
+    Character->Shoot();
+
+    //Will return Succeeded because we only want this task to run once
+    return EBTNodeResult::Succeeded;
+}
+```
+
+- In Unreal > BT_EnemyAI > after Chase > pull a new node > SEQUENCE > add a decorator > Loop > details > check infinite loop
+- In Unreal > BT_EnemyAI > after SEQUENCE > pull a new node > our custom Shoot function
+- In Unreal > BT_EnemyAI > after SEQUENCE > pull a new node > wait one second
 
 
-
-
+ *** BT_Services in C++
 
 
 
