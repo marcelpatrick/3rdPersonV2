@@ -742,8 +742,59 @@ EBTNodeResult::Type UBTTask_Shoot::ExecuteTask(
 - In Unreal > BT_EnemyAI > after SEQUENCE > pull a new node > our custom Shoot function
 - In Unreal > BT_EnemyAI > after SEQUENCE > pull a new node > wait one second
 
+### 2.4.5.1: Aim at the player to shoot
+ 
+- Create Service to update LastKnownPlayerLocation fron the behavior tree (on tick) while the AI is chasing the player (while the Chase node is active)
+	- It is better to update it on tick from the behavior tree than on tick from code because tick from code runs every frame while in the tick from behavior tree we can select the frequency in seconds you want to run it and also it only runs if the particular node is active
 
- *** BT_Services in C++
+- Set the service node in the behavior tree
+	- Services allow us to run a piece of code everytime a specific node in the Behavior tree is active
+	- In Unreal > BT_EnemyAI > Create a player variable in Blackboard
+	- In Unreal > BT_EnemyAI > in the Chase node > right click and select add Service > Default Focus > in Details > Blackboard key > select the Player variable
+	
+- Create a C++ class to customize the actions of this service in code
+	- In Unreal > Add New > New C++ class > show all classes > BTService_BlackboardBase > "BTService_PlayerLocation
+
+BTService_PlayerLocation.h
+```cpp
+public:
+	//Contructor - which is the name of the class
+	UBTService_PlayerLocation();
+protected:
+	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
+```
+
+- For every tick, get the updated player location
+	- In cpp > Get blackboard component > get pawn > get actor location
+BTService_PlayerLocation.cpp
+```cpp
+UBTService_PlayerLocation::UBTService_PlayerLocation()
+{
+    NodeName = "Update Player Location";
+}
+
+//update next tick interval if the code passes through this node in the behavior tree
+void UBTService_PlayerLocation::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
+{
+    Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
+
+    APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+
+    if (PlayerPawn == nullptr)
+    {
+        return;
+    }
+
+    OwnerComp.GetBlackboardComponent()->SetValueAsVector(GetSelectedBlackboardKey(), PlayerPawn->GetActorLocation());
+}
+```
+- In our Behavior tree, include this custom service in the Chase node and change its BlackboardKey variable to "LastKnownPlayerLocation"
+
+
+
+ *** BT_Services in C++: 9:28
+ 
+- Service to update PlayerLocation if we have line of sight and clear it if we don't
 
 
 
