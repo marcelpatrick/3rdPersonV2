@@ -875,6 +875,7 @@ void UBTService_PlayerLocationIfSeen::TickNode(UBehaviorTreeComponent& OwnerComp
 
 
 
+*** Ignoring actors in line traces
 
 
 
