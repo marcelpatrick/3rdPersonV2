@@ -896,10 +896,11 @@ void UBTService_PlayerLocationIfSeen::TickNode(UBehaviorTreeComponent& OwnerComp
 # ITERATION 3: Game Mode and Effects
 
 
-# Create our custom Game Mode
+# 1: Create our custom Game Mode
 - Will use our custom KillEmAllGameMode that will be derived from and implement the default main game mode, SimpleShooterGameMode
-- Define a function for when the actors are killed
-	- Use our custom PawnKilled() method in KillEmAllGameMode which will override the virtual PawnKilled() method in the parent SimpleShooterGameModeBase.
+
+## 1.1: Pawn Killed function
+- Define a function for when the actors are killed: Use our custom PawnKilled() method in KillEmAllGameMode which will override the virtual PawnKilled() method in the parent SimpleShooterGameModeBase.
 
 SimpleShooterGameModeBase.h
 ```cpp
@@ -960,8 +961,129 @@ void AKillEmAllGameMode::PawnKilled(APawn* PawnKilled)
 - In Unreal > BP_KillEmAllGameMode > Class Defaults > Change Default Pawn Class to KillEmAllGameMode 
 - In Unreal > click on Blueprints in the top bar > GameMode > Select GameMode Base Class > select BP_KillEmAllGameMode
 
+## 1.2: Game Over
 
+- Implement a player controller to restart the level after the player has died
 
+- In Unreal > add new > new C++ class > PlayerController > "ShooterPlayerController"
+- In Unreal > create a new blueprint class based on our C++ ShooterPlayerController > "BP_ShooterPlayerController"
+- In Unreal > In BP_KillEmAllGameMode > Details > Classes > PlayerControllerClass > change to BP_ShooterPlayerController
+
+- PawnKilled() WHO GOT KILLED? > EndGame() WIN OR LOOSE? > GameHasEnded() WHAT TO DO WHEN GAME HAS ENDED?
+
+### 1.2.1: GameHasEnded(): WHAT TO DO WHEN GAME HAS ENDED?
+
+- Implement our GameHasEnded() in our player controller class, to be called from EndGame(), and show win or loose widgets into our viewport and restart the game
+
+ShooterPlayerController.h
+```cpp
+public: 
+	virtual void GameHasEnded(class AActor* EndGameFocus = nullptr, bool bIsWinner = false) override;
+
+private:
+	UPROPERTY(EditAnywhere)
+	float RestartDelay = 5.f;
+
+	FTimerHandle RestartTimer;
+
+	UPROPERTY(EditAnywhere)
+	UUserWidget* HUD;
+```
+
+ShooterPlayerController.cpp
+```cpp
+void AShooterPlayerController::GameHasEnded(class AActor* EndGameFocus, bool bIsWinner)
+{
+    Super::GameHasEnded(EndGameFocus, bIsWinner);
+    
+    //Set timer to count 5 seconds after we are killed and then restart the level
+    GetWorldTimerManager().SetTimer(
+        RestartTimer, /* TimerHandle: can be used to pause (and resume) the countdown, query or change the amount of time remaining, or even cancel the timer altogether*/
+        this, /* objecto to be called*/ 
+        &APlayerController::RestartLevel, /*the address of the function we want to delay with this timer*/
+        RestartDelay /*amount of time for that timer to delay*/
+        );
+}
+```
+
+### 1.2.2: EndGame(): WIN OR LOOSE?
+
+- Implement EndGame() to end the game define win and loose conditions. Win (all enemy pawns were killed), loose (player pawn was killed). Then call GameHasEnded() passing the result of this function as a parameter.
+
+KillEmAllGameMode.h
+```cpp	
+private:
+	void EndGame(bool bIsPlayerWinner);
+	AShooterAIController* ShooterAIController;
+```
+
+KillEmAllGameMode.cpp
+```cpp
+void AKillEmAllGameMode::EndGame(bool bIsPlayerWinner)
+{
+    //Iterate over all the controllers / actors in the world so that we can call a function on each of those actors 
+        //check if they are of the player controller type (meaning that it is the player, not the AI) and, if it is, check if this player controller is the winner
+            //Use an engine helper - EngineUtils and the template function TActorRange
+                //Will return a range of actors (like a list) and allows us to iterate in all controllers in the world
+
+    //for (each controller variable : within this range)
+    for (AController* Controller : TActorRange<AController>(GetWorld()))
+    {
+        //if the controller is our player and it is the winner then we won the game
+        //if the controller is not our player (is the AI) and it is not the winner, then we also won the game
+        //otherwise we lost the game
+        bool bIsWinner = Controller->IsPlayerController() == bIsPlayerWinner;
+        Controller->GameHasEnded(
+            Controller->GetPawn(), /*keep the camera focus on the player*/
+            bIsWinner /*bool defining if we won or lost*/
+            );
+    }
+}
+```
+
+### 1.2.3: PawnKilled(): WHO GOT KILLED?
+
+- Implement the PawnKilled() function in KillEmAllGameMode to define which pawn was killed (the player or all the enemies) and call EndGame() passing the result of this function as a parameter.
+
+KillEmAllGameMode.h
+```cpp
+public:
+	//This method is going to override the virtual method in SimpleShooterGameModeBase
+	virtual void PawnKilled(APawn* PawnKilled) override;
+```
+
+KillEmAllGameMode.cpp
+```cpp
+void AKillEmAllGameMode::PawnKilled(APawn* PawnKilled)
+{
+    Super::PawnKilled(PawnKilled);
+
+    UE_LOG(LogTemp, Warning, TEXT("The Pawn was Killed"));
+    //In Unreal, change the BP_ShooterGameMode name to BP_KillEmAllGameMode > Open > Class Settings > Change Parent Class to KillEmAllGameMode
+        //click on Blueprints in the top bar > GameMode > Select GameMode Base Class > select BP_KillEmAllGameMode
+
+    //GAME OVER: Check if the killed pawn is a player controller (if the player has died) - Lose scenario
+    APlayerController* PlayerController = Cast<APlayerController>(PawnKilled->GetController());
+
+    if (PlayerController != nullptr)
+    {
+        EndGame(false);
+    }
+
+    //WIN GAME: For loop over all shooterAIs in the world and check if any of them are not dead. then game is not over, so return to exit out of this function and stop executing it
+    //If we iterate over all AI and they are all dead then end game - we won
+    for (AShooterAIController* Controller : TActorRange<AShooterAIController>(GetWorld()))
+    {
+        bool bIsPlayerController = Controller->IsPlayerController();
+
+        if (!Controller->IsDead())
+        {
+            return; 
+        }
+    }
+    EndGame(true);
+}
+```
 
 
 
