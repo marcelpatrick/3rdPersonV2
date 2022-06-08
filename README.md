@@ -1,13 +1,24 @@
 # 3rdPersonV2
 
 # Project Steps:
+
+- ITERATION 1: MAIN PLAYER
+
 1. Create Components: Parent Classes
 2. Create Sub-Components: Child Classes
 3. Player Input: Moving the Actor, Firing
 4. Player Animation
 5. Actions and Events: Hit Events, Health Component, Apply Damage
-6. Game Rules, Game Mode and Game Controller (Game Cycle: Start > Death > Winning, Loosing > End)
-7. Special Effects (Sounds, Particles)
+
+- ITERATION 2: ENEMIES AND AI
+
+1. Create Components: Parent Classes
+2. Player Input: Moving the Actor, Firing
+
+- ITERATION 3: Game Mode and Effects
+
+1. Game Rules, Game Mode and Game Controller (Game Cycle: Start > Death > Winning, Loosing > End)
+2. Special Effects (Sounds, Particles)
 
 
 # ITERATION 1: MAIN PLAYER
@@ -287,7 +298,7 @@ bool AGun::GunTrace(
 		//End point of a vector = Start point + range of the vector * direction of the vector
 	FVector End = Location + Rotation.Vector() * MaxRange;
 
-	//Define actors that should be ignore by the gun line tracing so that we don't shoot ourselves and pass these as params in the line trace method below
+	//Define actors that should be ignored by the gun line tracing so that we don't shoot ourselves and pass these as params in the line trace method below
 	FCollisionQueryParams Params;
 	Params.AddIgnoredActor(this);
 	Params.AddIgnoredActor(GetOwner());
@@ -405,6 +416,14 @@ float AShooterCharacter::TakeDamage(float DamageAmount, struct FDamageEvent cons
 
 	UE_LOG(LogTemp, Warning, TEXT("Your current Health is %f"), Health);
 	
+	if (IsDead())
+	{
+
+		//Stop the character from being controlled - moved.
+		DetachFromControllerPendingDestroy();
+		//Switch off capsule collision 
+		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
 	return DamageToApply;
 }
 ```
@@ -874,17 +893,72 @@ void UBTService_PlayerLocationIfSeen::TickNode(UBehaviorTreeComponent& OwnerComp
 - In our Behavior tree, include this custom service in the SELECTOR node > right click on the node > add service > Player Location If Seen > the service will be named "Update Player Location If Seen" > change its BlackboardKey variable to "Player"
 
 
-
-*** Ignoring actors in line traces
-
+# ITERATION 3: Game Mode and Effects
 
 
+# Create our custom Game Mode
+- Will use our custom KillEmAllGameMode that will be derived from and implement the default main game mode, SimpleShooterGameMode
+- Define a function for when the actors are killed
+	- Use our custom PawnKilled() method in KillEmAllGameMode which will override the virtual PawnKilled() method in the parent SimpleShooterGameModeBase.
 
+SimpleShooterGameModeBase.h
+```cpp
+public:
+	virtual void PawnKilled(APawn* PawnKilled);
+```
 
+SimpleShooterGameMode.cpp
+- just create an empty implementation so that our child custom game mode can inherit from this parent game mode
+```cpp
+void ASimpleShooterGameModeBase::PawnKilled(APawn* PawnKilled)
+{
+}
+```
 
+- Create a subclass of SimpleShooterGameModeBase: In Unreal > add new > new C++ class > show all classes > SimpleShooterGameModeBase > "KillEmAllGameMode"
 
+- If actor is dead, get hold of game mode and call the pawn killed.
 
+ShooterCharacter.cpp
+```cpp
+float AShooterCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser)
+{
+	if (IsDead())
+	{
+		//Get a hold of our game mode (the basic game mode that the game will start with - simple shooter) and call the killed pawn
+			//And store it in a variable so that we can later switch the game mode type
+		ASimpleShooterGameModeBase* GameMode = GetWorld()->GetAuthGameMode<ASimpleShooterGameModeBase>();
 
+		if (GameMode != nullptr)
+		{	
+			//Make the game mode aware that this pawn was killed
+			GameMode->PawnKilled(this);
+		}
+	}
+```
+
+- Override the KillEmAllGameMode so that we can log out when pawn is killed and set this as the default game mode
+
+KillEmAllGameMode.h
+```cpp
+public:
+	//This method is going to override the virtual method in SimpleShooterGameModeBase
+	virtual void PawnKilled(APawn* PawnKilled) override;
+```
+
+KillEmAllGameMode.cpp
+```cpp
+void AKillEmAllGameMode::PawnKilled(APawn* PawnKilled)
+{
+    Super::PawnKilled(PawnKilled);
+
+    UE_LOG(LogTemp, Warning, TEXT("The Pawn was Killed"));   
+}
+```
+
+- In Unreal > change the BP_ShooterGameMode name to BP_KillEmAllGameMode > Open > Class Settings > Change Parent Class to KillEmAllGameMode 
+- In Unreal > BP_KillEmAllGameMode > Class Defaults > Change Default Pawn Class to KillEmAllGameMode 
+- In Unreal > click on Blueprints in the top bar > GameMode > Select GameMode Base Class > select BP_KillEmAllGameMode
 
 
 
