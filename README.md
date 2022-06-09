@@ -896,7 +896,7 @@ void UBTService_PlayerLocationIfSeen::TickNode(UBehaviorTreeComponent& OwnerComp
 # ITERATION 3: Game Mode and Effects
 
 
-# 1: Create our custom Game Mode
+# 1: Game Mode
 - Will use our custom KillEmAllGameMode that will be derived from and implement the default main game mode, SimpleShooterGameMode
 
 ## 1.1: Pawn Killed function
@@ -1006,7 +1006,7 @@ void AShooterPlayerController::GameHasEnded(class AActor* EndGameFocus, bool bIs
 }
 ```
 
-### 1.2.2: EndGame(): WIN OR LOOSE?
+### 1.2.2: EndGame(): WIN OR LOSE?
 
 - Implement EndGame() to end the game define win and loose conditions. Win (all enemy pawns were killed), loose (player pawn was killed). Then call GameHasEnded() passing the result of this function as a parameter.
 
@@ -1016,6 +1016,8 @@ private:
 	void EndGame(bool bIsPlayerWinner);
 	AShooterAIController* ShooterAIController;
 ```
+
+- Since we call GameHasEnded() from within a actor controller, we have to know which specific controller won. If the player, the player controller has to call GameHasEnded() - win condition. If the AI, the AI controller has to call GameHasEnded() - lose condition.
 
 KillEmAllGameMode.cpp
 ```cpp
@@ -1029,9 +1031,10 @@ void AKillEmAllGameMode::EndGame(bool bIsPlayerWinner)
     //for (each controller variable : within this range)
     for (AController* Controller : TActorRange<AController>(GetWorld()))
     {
-        //if the controller is our player and it is the winner then we won the game
-        //if the controller is not our player (is the AI) and it is not the winner, then we also won the game
-        //otherwise we lost the game
+	// if the controller is the player controller (If the player is the one calling EndGame()) AND the player is the winner, then the caller of this function (the player) is the winner.
+	// if the controller is NOT the player controller (If the AI is the one calling EndGame()) AND the player is NOT the winner, then the caller of this function (the AI in this case) is the winner
+	// However, IsPlayerController() will always be true because we will always be the player controller by default in this game. So bIsWinner will only be trule if the player is the winner, not the AI
+	
         bool bIsWinner = Controller->IsPlayerController() == bIsPlayerWinner;
         Controller->GameHasEnded(
             Controller->GetPawn(), /*keep the camera focus on the player*/
@@ -1085,12 +1088,78 @@ void AKillEmAllGameMode::PawnKilled(APawn* PawnKilled)
 }
 ```
 
+# 2: Effects:
 
+## 2.1: Widgets:
 
+- In Unreal > Add New > User interface > Widget blueprint > "WBP_LoseScreen" / "WBP_WinScreen" / "WBP_HUDScreen"
+- inside WBP_LoseScreen > add a text component to the screen > customize it
 
+![image](https://user-images.githubusercontent.com/12215115/172826273-76efb0aa-52d8-4cf5-8e1a-b10634d81dc9.png)
+![image](https://user-images.githubusercontent.com/12215115/172828233-c2afe164-600c-4843-a26f-1bf6af47cf4a.png)
+![image](https://user-images.githubusercontent.com/12215115/172828294-22bf847e-c82c-4df7-ab71-d5fe4be2d1ce.png)
 
+- Define which widget class will be spawned
+ShooterPlayerController.h
+```cpp
+private:
+	UPROPERTY(EditAnywhere)
+	//Create a variable of class type of the widget class we are trying to spawn
+		//Restrict the type of class to only be User Widget with TSubclassOf<>
+	TSubclassOf<class UUserWidget> LoseScreenClass;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UUserWidget> WinScreenClass;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UUserWidget> HUDClass; 
+	
+	UPROPERTY(EditAnywhere)
+	UUserWidget* HUD;
+```
+
+- Spawn the widgets in the world
+ShooterPlayerController.cpp
+```cpp
+void AShooterPlayerController::GameHasEnded(class AActor* EndGameFocus, bool bIsWinner)
+{
+    Super::GameHasEnded(EndGameFocus, bIsWinner);
+
+    HUD->RemoveFromViewport();
+
+    if (bIsWinner)
+    {
+        //print win widget
+        UUserWidget* WinScreen = CreateWidget(this, WinScreenClass);
+
+        if (WinScreen != nullptr)
+        {
+            WinScreen->AddToViewport();
+        }
+        //In Unreal > BP_ShooterPlayerController > WinScreenClass > select our WBP_WinScreen
+    }
+    else
+    {
+        //print lose widget
+
+        //Spawn Widget
+        UUserWidget* LoseScreen = CreateWidget(
+            this, /*Owning object*/ 
+            LoseScreenClass /*Widget class*/
+            );
+
+        if (LoseScreen != nullptr)
+        {
+            //Print our widget to the screen
+            LoseScreen->AddToViewport();
+        }
+        //In Unreal > BP_ShooterPlayerController > LoseScreenClass > select our WBP_LoseScreen
+    }
+}
+```
+
+- Open SimpleShooter.Build.cs > inside PublicDependencyModuleNames > add "UMG"
+- In Unreal > ShooterPlayerController > Details > ShooterPlayerController > Lose Screen Class > select WBP_LoseScreen
 
 
 
