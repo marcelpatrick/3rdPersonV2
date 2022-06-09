@@ -1044,6 +1044,31 @@ void AKillEmAllGameMode::EndGame(bool bIsPlayerWinner)
 }
 ```
 
+- Create a method to define whether a AI is dead
+
+ShooterAIController.h
+```cpp
+public
+	bool IsDead() const;
+```
+
+ShooterAIController.cpp
+```cpp
+//Check if the AI is dead
+bool AShooterAIController::IsDead() const
+{
+    //Check if the pawn is a shooter character type
+    AShooterCharacter* ControlledCharacter = Cast<AShooterCharacter>(GetPawn());
+
+    if (ControlledCharacter != nullptr)
+    {
+        return ControlledCharacter->IsDead();
+    }
+    //if there is not a pawn controlling this character it means that it is dead
+    return true;
+}
+```
+
 ### 1.2.3: PawnKilled(): WHO GOT KILLED?
 
 - Implement the PawnKilled() function in KillEmAllGameMode to define which pawn was killed (the player or all the enemies) and call EndGame() passing the result of this function as a parameter.
