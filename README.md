@@ -1187,7 +1187,9 @@ void AShooterPlayerController::GameHasEnded(class AActor* EndGameFocus, bool bIs
 - In Unreal > ShooterPlayerController > Details > ShooterPlayerController > Lose Screen Class > select WBP_LoseScreen
 
 
+ *** include particle system effects inside Gun.cpp
 
+ *** weapon sound effects
 
 
 
