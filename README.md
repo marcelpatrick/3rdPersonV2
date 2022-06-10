@@ -1215,13 +1215,40 @@ void AGun::PullTrigger()
 	if (bSuccess)
 	{
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactEffect, Hit.Location, ShotDirection.Rotation());
+		//Then include the impact effect in BP_Rifle
 	}
 }
 ```
 
- *** weapon sound effects
+## 2.3: Sounds
 
+in Gun.h, include sound components 
+```cpp
+private: 
+	UPROPERTY(EditAnywhere)
+	USoundBase* MuzzleSound; 
 
+	UPROPERTY(EditAnywhere)
+	USoundBase* ImpactSound; 
+```
+
+Gun.cpp
+```cpp
+void AGun::PullTrigger()
+{
+	//Spawn sound on pull trigger
+	//use SpawnSoundAttach to attach sound to the barrel of our gun and make it come always from that point
+	UGameplayStatics::SpawnSoundAttached(MuzzleSound, Mesh, TEXT("MuzzleFlashSocket"));
+	//in BP_Rfile > Details > Gun > MuzzleSound > include our sound effect
+	
+	if (bSuccess)
+	{
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), ImpactSound, Hit.Location);
+		//in BP_Rfile > Details > Gun > ImpactSound > include our sound effect
+	}
+}
+
+```
 
 
 
