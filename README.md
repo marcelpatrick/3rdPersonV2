@@ -1127,6 +1127,9 @@ void AKillEmAllGameMode::PawnKilled(APawn* PawnKilled)
 - Define which widget class will be spawned
 ShooterPlayerController.h
 ```cpp
+protected:
+	virtual void BeginPlay() override;
+	
 private:
 	UPROPERTY(EditAnywhere)
 	//Create a variable of class type of the widget class we are trying to spawn
@@ -1146,6 +1149,18 @@ private:
 - Spawn the widgets in the world
 ShooterPlayerController.cpp
 ```cpp
+void AShooterPlayerController::BeginPlay()
+{
+    Super::BeginPlay();
+
+    HUD = CreateWidget(this, HUDClass);
+    if (HUD != nullptr)
+    {
+        HUD->AddToViewport();
+    }
+    
+}
+
 void AShooterPlayerController::GameHasEnded(class AActor* EndGameFocus, bool bIsWinner)
 {
     Super::GameHasEnded(EndGameFocus, bIsWinner);
