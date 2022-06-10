@@ -1186,8 +1186,38 @@ void AShooterPlayerController::GameHasEnded(class AActor* EndGameFocus, bool bIs
 - Open SimpleShooter.Build.cs > inside PublicDependencyModuleNames > add "UMG"
 - In Unreal > ShooterPlayerController > Details > ShooterPlayerController > Lose Screen Class > select WBP_LoseScreen
 
+## 2.2: Particles
 
- *** include particle system effects inside Gun.cpp
+- Spawn emitters on gun shooting and bullet impact
+
+In Gun.h, create emitter components 
+```cpp
+private:
+	UPROPERTY(EditAnywhere)
+	UParticleSystem *MuzzleFlash;
+
+	UPROPERTY(EditAnywhere)
+	UParticleSystem *ImpactEffect;
+```
+
+In Gun.cpp
+```cpp
+void AGun::PullTrigger()
+{
+	//Spawn an emitter at the riffle's muzzle on pull trigger
+	UGameplayStatics::SpawnEmitterAttached(
+		MuzzleFlash, //Particle system variable
+		Mesh, //Scene component to which to attach the emitter
+		TEXT("MuzzleFlashSocket") //name of the component socket to which to attach
+	); 
+	//Then in BP_Riffle, select the emitter blueprint for this emitter
+	
+	if (bSuccess)
+	{
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactEffect, Hit.Location, ShotDirection.Rotation());
+	}
+}
+```
 
  *** weapon sound effects
 
