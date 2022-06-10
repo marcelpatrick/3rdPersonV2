@@ -1250,8 +1250,19 @@ void AGun::PullTrigger()
 
 ```
 
+### 2.3.1: Sound Cues: randomize sounds
 
+- In Unreal > add new > Sounds > Sound Cues > A_RifleShot_Cue
+- in unreal > content folder > select all sound wave files to be included > A_RifleShot_Cue > right click > select Random: multiple WAVs > link to Modulator > link to Output
+- details > random > select randomize without replacement
+- details > modulation > select min and max pitch
 
+![image](https://user-images.githubusercontent.com/12215115/173055910-fb7dc378-e397-4a5f-9146-8aa7c09bde08.png)
+
+### 2.3.2: Sound Spacialization: make sounds louder or quieter depending on our distance to them
+
+- in Unreal _ A_RifleShot_Cue > details > attenuation settings > sound attenuation > "ATT_Default" 
+- open "ATT_Default" > details > 
 
 
 
