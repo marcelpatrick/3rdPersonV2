@@ -1118,7 +1118,8 @@ void AKillEmAllGameMode::PawnKilled(APawn* PawnKilled)
 ## 2.1: Widgets:
 
 - In Unreal > Add New > User interface > Widget blueprint > "WBP_LoseScreen" / "WBP_WinScreen" / "WBP_HUDScreen"
-- inside WBP_LoseScreen > add a text component to the screen > customize it
+- inside WBP_LoseScreen / WBP_LoseScreen > add a text component to the screen > customize it
+- inside WBP_HUD > add crosshair and a progress bar and customize them > start percentage of progress bar as 1
 
 ![image](https://user-images.githubusercontent.com/12215115/172826273-76efb0aa-52d8-4cf5-8e1a-b10634d81dc9.png)
 ![image](https://user-images.githubusercontent.com/12215115/172828233-c2afe164-600c-4843-a26f-1bf6af47cf4a.png)
@@ -1127,6 +1128,10 @@ void AKillEmAllGameMode::PawnKilled(APawn* PawnKilled)
 - Define which widget class will be spawned
 ShooterPlayerController.h
 ```cpp
+public: 
+	UFUNCTION(BlueprintPure)
+	float GetHealthPercent() const;
+	
 protected:
 	virtual void BeginPlay() override;
 	
@@ -1159,6 +1164,11 @@ void AShooterPlayerController::BeginPlay()
         HUD->AddToViewport();
     }
     
+}
+
+float AShooterCharacter::GetHealthPercent() const
+{
+	return Health/MaxHealth;
 }
 
 void AShooterPlayerController::GameHasEnded(class AActor* EndGameFocus, bool bIsWinner)
@@ -1197,7 +1207,8 @@ void AShooterPlayerController::GameHasEnded(class AActor* EndGameFocus, bool bIs
     }
 }
 ```
-
+- in WBP_HUD > select the progress bar > details > progress > percent > bind > create biding > rename funciton to "Get Health"
+	- righ click > get Owning player pawn > cast to shooter character > Get health percent > return value
 - Open SimpleShooter.Build.cs > inside PublicDependencyModuleNames > add "UMG"
 - In Unreal > ShooterPlayerController > Details > ShooterPlayerController > Lose Screen Class > select WBP_LoseScreen
 
