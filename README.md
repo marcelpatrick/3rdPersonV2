@@ -44,8 +44,9 @@ Inside the BP, Details, Classes, Default Pawn Class, select our main character B
 In Unreal, Blueprints, GameMode, Select GameMode base class, select our BP_ShooterGameMode class.
 
 
-# 2: Create Sub-Components: Gun Component
+# 2: Create Sub-Components
 
+- Create a new BP class derived from BP_ShooterCharacter to be our BP_PlayerShooterCharacter, our main player.
 - Create a c++ gun component of actor type. 
 - Create a BP subclass based on this c++ class: BP_Rifle
 - Add components in the Gun actor: Root and Mesh attached to the root
@@ -469,7 +470,6 @@ bool AShooterCharacter::IsDead() const
 # 1: Create Components
 
 - Include a new BP_ShooterCharacter in the world to be our enemy
-- Create a new BP class derived from BP_ShooterCharacter to be our BP_PlayerShooterCharacter, our main player.
 - Create a new AI Controller class, name ShooterAIController. 
 - Create e new BP to be child from the ShooterAIController class: BP_ShooterAIController
 - In Unreal, open BP_ShooterCharacter > details > Pawn > AIController Class > choose BP_ShooterAIController
@@ -917,7 +917,7 @@ void ASimpleShooterGameModeBase::PawnKilled(APawn* PawnKilled)
 ```
 
 - Create a subclass of SimpleShooterGameModeBase: In Unreal > add new > new C++ class > show all classes > SimpleShooterGameModeBase > "KillEmAllGameMode"
-
+- in KillEmAllGameMode > details > default pawn class > select our main player: BP_PlayerShooterCharacter
 - If actor is dead, get hold of game mode and call the pawn killed.
 
 ShooterCharacter.cpp
@@ -1291,7 +1291,7 @@ void AGun::PullTrigger()
 - open "ATT_Default" > details > 
 
 
-
+*** Ain offsets
 
 
 
