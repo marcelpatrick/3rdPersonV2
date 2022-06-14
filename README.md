@@ -256,6 +256,30 @@ EventBlueprintUpdateAnimation > ?IsValid > Sequence > Execution > SetIsAirBorne
 
 ![image](https://user-images.githubusercontent.com/12215115/170245151-18316618-b9a5-4017-9e07-7052556f03cb.png)
 
+## 4.2: Animation Graph and State Machines
+
+ *** EDIT ***
+
+- Open ABP_ShooterCharacter > AnimGraph
+
+### 4.2.3: Setup a state machine "Death" > link it to the output pose
+
+### 4.2.4: Inside the Death state machine > Entry > set two nodes, Alive and Dead 
+
+### 4.2.5: Inside the Alive node 
+
+- Include a new node to be our idle default pose: "Idle_AO_Combat" > Output animation pose
+
+- Add locomotion capabilities to our idle pose: Create a Locomotion state machine > Idle_IO_Combat base pose
+
+- Adjust the pitch for our default pose in the AnimGraph according to our aim, so that the character can aim up, down:
+	- Idle_AO_Combat > right click on Pitch > promote to variable > "AimPitch"
+
+- Set "AimPitch" in event graph
+ 	- Update animation > "Is_Valid" > Sequence 
+	- ![image](https://user-images.githubusercontent.com/12215115/173557479-bc9dc041-8303-456e-a7a1-6cfaceac9fd5.png)
+
+
 
 # 5. Actions and Events: Hit Events, Health Component, Apply Damage
 
