@@ -274,14 +274,10 @@ EventBlueprintUpdateAnimation > ?IsValid > Sequence > Execution > SetIsAirBorne
 
 - Adjust the pitch for our default pose in the AnimGraph according to our aim, so that the character can aim up, down:
 	- Idle_AO_Combat > right click on Pitch > promote to variable > "AimPitch"
-
-- Set "AimPitch" in event graph
- 	- Update animation > "Is_Valid" > Sequence 
-	- ![image](https://user-images.githubusercontent.com/12215115/173557479-bc9dc041-8303-456e-a7a1-6cfaceac9fd5.png)
-
-
+	
 
 # 5. Actions and Events: Hit Events, Health Component, Apply Damage
+
 
 ## 5.1: Set Gun Line tracing
 
