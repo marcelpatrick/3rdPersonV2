@@ -641,14 +641,14 @@ void UBTService_PlayerLocationIfSeen::TickNode(UBehaviorTreeComponent& OwnerComp
  ```
  
  - In BT_EnemyAI > BehaviorTree: right click on the SELECTOR > add service > select our custom service "Player Location If Seen"
- - In BT_EnemyAI > BehaviorTree: details > blackboard key > select: PlayerLocation variable
+ - In BT_EnemyAI > BehaviorTree: details > blackboard key > select: Player variable
 
 ![image](https://user-images.githubusercontent.com/12215115/173561306-09784283-f638-4b78-9181-e29ab0a39865.png)
 
 #### 2.4.2: Can See Player ? > Chase Player
  
  - After the selector > Add a new sequence called Chase 
- - Right click on the Chase sequence > Add a decorator of type Blackboard > call it "Can See Player?" > in details > Blackboard > key query = is set > blackboard key = PlayerLocation
+ - Right click on the Chase sequence > Add a decorator of type Blackboard > call it "Can See Player?" > in details > Blackboard > key query = is set > blackboard key = Player
  	- Blackboard condition node: only executes the sequence based on a condition related to a blackboard variable: if PlayerLocation is set
  - Add a new Move To node after Chase > in details > blackboard > blackboard key = Player
  - in Details > Blackboard > check Observer Blackboard value
@@ -801,6 +801,8 @@ EBTNodeResult::Type UBTTask_Shoot::ExecuteTask(
 - In Unreal > BT_EnemyAI > Create a player variable in Blackboard
 - In Unreal > BT_EnemyAI > in the Chase node > right click and select add Service > Default Focus > in Details > Blackboard key > select the Player variable
 	
+![image](https://user-images.githubusercontent.com/12215115/173563080-e1b2bd95-5e4c-4cda-854a-0da020490cc1.png)
+
 ##### 2.4.5.1.2: Custom Services
 
 ###### 2.4.5.1.2.1: Update LastKnownPlayerLocation
