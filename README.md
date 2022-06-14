@@ -258,22 +258,27 @@ EventBlueprintUpdateAnimation > ?IsValid > Sequence > Execution > SetIsAirBorne
 
 ## 4.2: Animation Graph and State Machines
 
- *** EDIT ***
-
 - Open ABP_ShooterCharacter > AnimGraph
 
-### 4.2.3: Setup a state machine "Death" > link it to the output pose
+- Add a new state machine "Death" > link it to the output pose
 
-### 4.2.4: Inside the Death state machine > Entry > set two nodes, Alive and Dead 
+- Inside the Death state machine > Entry > set two nodes, Alive and Dead 
 
-### 4.2.5: Inside the Alive node 
+- Inside the Alive node 
+	- Include a new node to be our idle default pose: 
+		- "Idle_AO_Combat" > Output animation pose
+	- Add locomotion capabilities to our idle pose: 
+		- Create a Locomotion state machine > Idle_IO_Combat base pose
+		- Inside Locomotion
+			- Entry > Grounded > Add state > Airborne > Grounded
+			- Inside Airborne > Output Animation pose > pull off result pin > Play Jump_Apex_Combat > Details > Settings > uncheck Loop Animation
+				- ![image](https://user-images.githubusercontent.com/12215115/173572214-358beef7-0414-4ea2-8428-2745513487e0.png)
+			- double click on the transition node grounded to airborne > add variable > bool "IsAirborne" > get IsAirborne > Result can enter transition
+			- double click on the transition node airborne to grounded > IsAirborne bool > NOT > Result
+				- ![image](https://user-images.githubusercontent.com/12215115/173573650-899a2e14-38e8-423a-b1e5-49e92616f2cf.png)
 
-- Include a new node to be our idle default pose: "Idle_AO_Combat" > Output animation pose
-
-- Add locomotion capabilities to our idle pose: Create a Locomotion state machine > Idle_IO_Combat base pose
-
-- Adjust the pitch for our default pose in the AnimGraph according to our aim, so that the character can aim up, down:
-	- Idle_AO_Combat > right click on Pitch > promote to variable > "AimPitch"
+	- Adjust the pitch for our default pose in the AnimGraph according to our aim, so that the character can aim up, down:
+		- Idle_AO_Combat > right click on Pitch > promote to variable > "AimPitch"
 	
 
 # 5. Actions and Events: Hit Events, Health Component, Apply Damage
