@@ -568,14 +568,15 @@ void AShooterAIController::BeginPlay()
 - Create a vector variable for StartLocation
 - Create a vector variable called LastKnownPlayerLocation
 - Create an object variable with base class "Actor" called SelfActor
-- Create an object variable with base class "Actor" called Player
+- Create an object variable with base class "Actor" called Player > base class "actor"
 
 ### 2.4: Build the behavior trees nodes
 
 - Logic: If AI sees player, run towards him. If it doesn't, investigate moving to the player's last know location
 
-#### 2.4.1: If AI sees player, updated player location in the AI memory
+#### 2.4.1: Update player location if seen
 
+- If AI sees player, updated player location in the AI memory
 - In BT_EnemyAI, Behavior Tree section, After Root, include a SELECTOR to shift between behavior nodes and include a SERVICE to Update the Player Location in the AI location memory (PlayerLocation) var only if the player is seen by the AI
 	- SELECTOR runs all behaviors in the tree until the first one succeeds. Moves through the ones that fail. Stops when succeeds. Performs only one task (the first that is viable)
 	- SEQUENCE runs all behaviors until one of the fails. Runs all behaviors that succeed. Stops when fails. Performs all tasks that are viable.
@@ -642,14 +643,18 @@ void UBTService_PlayerLocationIfSeen::TickNode(UBehaviorTreeComponent& OwnerComp
  - In BT_EnemyAI > BehaviorTree: right click on the SELECTOR > add service > select our custom service "Player Location If Seen"
  - In BT_EnemyAI > BehaviorTree: details > blackboard key > select: PlayerLocation variable
 
+![image](https://user-images.githubusercontent.com/12215115/173561306-09784283-f638-4b78-9181-e29ab0a39865.png)
+
 #### 2.4.2: Can See Player ? > Chase Player
  
  - After the selector > Add a new sequence called Chase 
  - Right click on the Chase sequence > Add a decorator of type Blackboard > call it "Can See Player?" > in details > Blackboard > key query = is set > blackboard key = PlayerLocation
  	- Blackboard condition node: only executes the sequence based on a condition related to a blackboard variable: if PlayerLocation is set
- - Add a new Move To node after Chase > in details > blackboard > blackboard key = PlayerLocation
+ - Add a new Move To node after Chase > in details > blackboard > blackboard key = Player
  - in Details > Blackboard > check Observer Blackboard value
  
+ ![image](https://user-images.githubusercontent.com/12215115/173561461-008691dd-545f-4959-800e-b431c75b2402.png)
+
  #### 2.4.3: Has Investigated? > Investigate
  
  - Go to where the player was seen last. if LastKnowPlayer location is set (if AI saw where player was last) then walk there to investigate.
@@ -659,7 +664,9 @@ void UBTService_PlayerLocationIfSeen::TickNode(UBehaviorTreeComponent& OwnerComp
   - Click on the "Can See Player" Blackboard decorator > In details > flow control > observer aborts > select both : it aborts both the nodes in the selector (Chase and Investigate) in case something fails.
   -  Right click on the Investigate sequence > Add a decorator of type Blackboard > call it "has Investigated?" > in details > Blackboard > key query = is set > blackboard key = LastKnowPlayerLocation
  
-  #### 2.4.3.1: Custom Taks: Clear Blackboard Value
+ ![image](https://user-images.githubusercontent.com/12215115/173561584-e8da652a-1ccc-466f-be6e-14eda9863b3f.png)
+
+  #### 2.4.3.1: Custom Tasks: Clear Blackboard Value
   
  - Forget about where the player was last and move back to the initial position. Clear LastKnowPlayer location from memory.
   
@@ -713,9 +720,13 @@ EBTNodeResult::Type UMyBTTask_ClearBlackboardValue::ExecuteTask(
 - in Unreal > BT_EnemyAI > pull a new node after Investigate > select our custom task Clear Blackboard Value > in details > Blackboard > Blackboard key > select LastKnownPlayerLocation
 - pull another new node after Investigate > Wait
 
- ### 2.4.4: Move back to the initial location
+![image](https://user-images.githubusercontent.com/12215115/173561751-aa5a4718-175d-454b-b823-788bbafa8667.png)
+
+ ### 2.4.4: Move to StartLocation
  
  - in Unreal > in BT_EnemyAI > After the SELECTOR node > pull a new MoveTo node > select StartLocation as a variable / Blackboard Key 
+
+![image](https://user-images.githubusercontent.com/12215115/173561901-6d567be1-82f5-46dc-abcd-96330d11e22c.png)
 
  ### 2.4.5: Shoot
   
