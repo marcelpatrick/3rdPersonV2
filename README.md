@@ -274,19 +274,19 @@ EventBlueprintUpdateAnimation > ?IsValid > Sequence > Execution > SetIsAirBorne
 		
 		- Inside Locomotion: add new states and link them with transitions. Edit the states based on float var and transitions based on bool variables. These var need to be set in two places: In the EventGraph so that an event can set their value and in the AnimGraph to tell the state machine the direction of an animation or when to enter a transition: Entry > Grounded > Jumping > Airborne > Landing > Grounded 
 			- In Grounded: Get Angle var / Get Speed var > BS_Locomotion > Output animation pose
-			![image](https://user-images.githubusercontent.com/12215115/173811140-ca45782f-8f6a-40fb-b3cb-72311d7ae217.png)
+			- ![image](https://user-images.githubusercontent.com/12215115/173811140-ca45782f-8f6a-40fb-b3cb-72311d7ae217.png)
 				- In Grounded to Jumping: add variable > bool "IsAirborne" > get IsAirborne > Result can enter transition
-				![image](https://user-images.githubusercontent.com/12215115/173811212-86bb6ccd-abbc-4b3c-a99e-7d0757d6f448.png)
+				- ![image](https://user-images.githubusercontent.com/12215115/173811212-86bb6ccd-abbc-4b3c-a99e-7d0757d6f448.png)
 			- In Jumping: add Jump_Start_Combat > Output animation pose
-			![image](https://user-images.githubusercontent.com/12215115/173811374-8d965aad-65c2-4e9e-a481-79002abc2880.png)
+			- ![image](https://user-images.githubusercontent.com/12215115/173811374-8d965aad-65c2-4e9e-a481-79002abc2880.png)
 			- In Airborne: Output Animation pose > pull off result pin > Play Jump_Apex_Combat > Details > Settings > uncheck Loop Animation
-			![image](https://user-images.githubusercontent.com/12215115/173572214-358beef7-0414-4ea2-8428-2745513487e0.png)
+			- ![image](https://user-images.githubusercontent.com/12215115/173572214-358beef7-0414-4ea2-8428-2745513487e0.png)
 				- In Airborne to Landing: IsAirborne bool > NOT > Result
 				- ![image](https://user-images.githubusercontent.com/12215115/173573650-899a2e14-38e8-423a-b1e5-49e92616f2cf.png)
 			- In Landing: Add Jump_Land_Combat > Output animation pose
-			![image](https://user-images.githubusercontent.com/12215115/173811486-c8940066-1f19-4f57-b9b8-8121577ba4c5.png)
+			- ![image](https://user-images.githubusercontent.com/12215115/173811486-c8940066-1f19-4f57-b9b8-8121577ba4c5.png)
 				- In Landing to grounded: Get IsAirborne bool > NOT > Result: Can Enter the Transition
-				![image](https://user-images.githubusercontent.com/12215115/173811802-70ba0895-f3f3-4392-92bc-a6b72bd55c72.png)
+				- ![image](https://user-images.githubusercontent.com/12215115/173811802-70ba0895-f3f3-4392-92bc-a6b72bd55c72.png)
 
 	- Adjust the pitch for our default pose in the AnimGraph according to our aim, so that the character can aim up, down:
 		- Idle_AO_Combat > right click on Pitch > promote to variable > "AimPitch"
