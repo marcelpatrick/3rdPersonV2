@@ -273,6 +273,7 @@ EventBlueprintUpdateAnimation > ?IsValid > Sequence > Execution > SetIsAirBorne
 		- ![image](https://user-images.githubusercontent.com/12215115/173802505-381098c3-37d6-408b-8866-3417a4a43213.png)
 	- Add locomotion capabilities to our idle pose: Create a Locomotion state machine > Idle_IO_Combat base pose
 		- Inside Locomotion: add new states and link them with transitions. Edit the states based on float var and transitions based on bool variables. These var need to be set in two places: In the EventGraph so that an event can set their value and in the AnimGraph to tell the state machine the direction of an animation or when to enter a transition: Entry > Grounded > Jumping > Airborne > Landing > Grounded 
+		- ![image](https://user-images.githubusercontent.com/12215115/173815866-dba7a701-a70a-4b64-82c4-7c6bc5a0a6e7.png)
 			- In Grounded: Get Angle var / Get Speed var > BS_Locomotion > Output animation pose
 			- ![image](https://user-images.githubusercontent.com/12215115/173811140-ca45782f-8f6a-40fb-b3cb-72311d7ae217.png)
 			- In Grounded to Jumping: add variable > bool "IsAirborne" > get IsAirborne > Result can enter transition
