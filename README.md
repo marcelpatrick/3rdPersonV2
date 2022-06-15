@@ -1346,8 +1346,14 @@ void AGun::PullTrigger()
 - in Unreal _ A_RifleShot_Cue > details > attenuation settings > sound attenuation > "ATT_Default" 
 - open "ATT_Default" > details > 
 
+### 2.3.3: Music
 
-*** Ain offsets
+- In Unreal > Modes > Ambient Sound > drag it into the world > Details > Sound > select from the dropdown : shooter game music
+
+### 2.3.4: Player Speech lines
+
+- Make player say a line on begin play
+- BP_PlayerShooterCharacter > Event Graph > Begin Play / Get Actor location > Play Sound at location / select sound asset : "intro"
 
 
 
