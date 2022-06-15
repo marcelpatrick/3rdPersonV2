@@ -262,7 +262,8 @@ EventBlueprintUpdateAnimation > ?IsValid > Sequence > Execution > SetIsAirBorne
 
 - Add a new state machine "Death" > link it to the output pose
 
-- Inside the Death state machine > Entry > set two nodes, Alive and Dead 
+- Inside the Death state 
+- 	Entry > set a new node Alive > link it to a new node Dead > link Dead back to Alive 
 
 - Inside the Alive node 
 	- Include a new node to be our idle default pose: 
@@ -279,6 +280,7 @@ EventBlueprintUpdateAnimation > ?IsValid > Sequence > Execution > SetIsAirBorne
 
 	- Adjust the pitch for our default pose in the AnimGraph according to our aim, so that the character can aim up, down:
 		- Idle_AO_Combat > right click on Pitch > promote to variable > "AimPitch"
+		- ![image](https://user-images.githubusercontent.com/12215115/173802505-381098c3-37d6-408b-8866-3417a4a43213.png)
 	
 
 # 5. Actions and Events: Hit Events, Health Component, Apply Damage
