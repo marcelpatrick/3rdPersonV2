@@ -59,7 +59,7 @@ In Unreal, Blueprints, GameMode, Select GameMode base class, select our BP_Shoot
 - Attach scene component (BP_Rifle) to the socked of the ShooterCharacter skeleton mesh
 - Asign the owner for the rifle to be the shooter character
 
-Header file
+ShooterCharacter.h
 ```cpp
 private: 
 	UPROPERTY(EditDefaultsOnly) /*so that no one can edit it at run time*/
@@ -73,7 +73,7 @@ private:
 	AGun* Gun;
 ```
 
-cpp
+ShooterCharacter.cpp
 ```cpp
 void AShooterCharacter::BeginPlay()
 {
