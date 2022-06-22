@@ -37,11 +37,26 @@ In Unreal, select the c++ class and click on Create a new blueprint based on "th
 - Add a camera and a spring arm component (+AddComponent), attach the camera to the spring arm and adjust its position.
 - In BP, View Port > Details > Rendering > disable player hidden in game.
 
+### 1.2.1: Hide default weapon
+- Hide the bone attached to the default weapon that already came with the mesh so that we can replace with our own standalone weapon class
+
+ShooterCharacter.cpp
+```cpp
+void AShooterCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+	
+	//Hide the gun that is currently there
+	GetMesh()->HideBoneByName(TEXT("weapon_r"), EPhysBodyOp::PBO_None); //Then, in the Skeleton asset, add a new socket
+}
+```
+
 ## 1.3: Create our own GameMode BP class
 
 In Unreal, Create a new BP class inheriting from GameMode Base: BP_ShooterGameMode
 Inside the BP, Details, Classes, Default Pawn Class, select our main character BP.
 In Unreal, Blueprints, GameMode, Select GameMode base class, select our BP_ShooterGameMode class.
+Include a Player Start component into the level
 
 
 # 2: Create Sub-Components
@@ -80,10 +95,7 @@ void AShooterCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	//Spawn the rifle component from our actor component at run time
-	Gun = GetWorld()->SpawnActor<AGun>(GunClass); //Then select the BP_Rifle as the GunClass Mesh in our BP_ShotterCharacter
-	
-	//Hide the gun that is currently there
-	GetMesh()->HideBoneByName(TEXT("weapon_r"), EPhysBodyOp::PBO_None); //Then, in the Skeleton asset, add a new socket
+	Gun = GetWorld()->SpawnActor<AGun>(GunClass); //Then select the BP_Rifle as the GunClass Mesh in our BP_ShotterCharactert
 	
 	//Attach the new gun to the actor's hand
 	Gun->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("WeaponSocket"));
