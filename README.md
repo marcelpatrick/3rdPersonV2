@@ -70,7 +70,6 @@ Include a Player Start component into the level
 ## 2.1: Attach the rifle component to our character component in the scene:
 
 - Spawn rifle component be shown close to our actor mesh
-- Hide the gun that is already there: hide the weapon bone: 
 - Attach scene component (BP_Rifle) to the socked of the ShooterCharacter skeleton mesh
 - Asign the owner for the rifle to be the shooter character
 
