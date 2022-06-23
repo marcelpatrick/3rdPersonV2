@@ -64,7 +64,7 @@ Include a Player Start component into the level
 - Create a new BP class derived from BP_ShooterCharacter to be our BP_PlayerShooterCharacter, our main player.
 - Create a c++ gun component of actor type. 
 - Create a BP subclass based on this c++ class: BP_Rifle
-- Add components in the Gun actor: Root and Mesh attached to the root
+- Add components in the Gun actor: Skeletal Mesh attached to the root
 - Select a mesh component for the type of gun
 
 ## 2.1: Attach the rifle component to our character component in the scene:
