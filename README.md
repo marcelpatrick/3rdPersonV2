@@ -24,7 +24,7 @@
 # ITERATION 1: MAIN PLAYER
 
 
-# 1: Create Components
+# 1: Create Main Objects
 
 ## 1.1: Main Character C++ class
 Create a new C++ class "ShooterCharacter" inheriting from the Character class that will be the base class for both our player and our enemies.
@@ -54,31 +54,80 @@ void AShooterCharacter::BeginPlay()
 ## 1.3: Create our own GameMode BP class
 
 In Unreal, Create a new BP class inheriting from GameMode Base: BP_ShooterGameMode
-Inside the BP, Details, Classes, Default Pawn Class, select our main character BP.
 In Unreal, Blueprints, GameMode, Select GameMode base class, select our BP_ShooterGameMode class.
 Include a Player Start component into the level
 
 
-# 2: Create Sub-Components
+# 2: Create Sub-Objects
+
+## 2.1: GameMode
 
 - Create a new BP class derived from BP_ShooterCharacter to be our BP_PlayerShooterCharacter, our main player.
+- Inside the BP_ShooterGameMode, Details, Classes, Default Pawn Class, select our BP_PlayerShooterCharacter.
+
+## 2.2: Gun
+
+### 2.2.1: Create gun c++ class and blueprint
+
 - Create a c++ gun component of actor type. 
 - Create a BP subclass based on this c++ class: BP_Rifle
+
+### 2.2.2: Add components to the Blueprint
+
 - Add components in the Gun actor: Skeletal Mesh attached to the root
-- Select a mesh component for the type of gun
 
-## 2.1: Attach the rifle component to our character component in the scene:
+Gun.h
+```cpp
+private:
 
+	UPROPERTY(VisibleAnywhere)
+	USceneComponent* Root;
+
+	UPROPERTY(VisibleAnywhere)
+	USkeletalMeshComponent* Mesh;
+```
+
+Gun.cpp
+```cpp
+#include "Gun.h"
+#include "Components/SkeletalMeshComponent.h"
+
+// Sets default values
+AGun::AGun()
+{
+ 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	PrimaryActorTick.bCanEverTick = true;
+	
+	Root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
+	SetRootComponent(Root);
+
+	Mesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh"));
+	Mesh->SetupAttachment(Root);
+
+}
+```
+
+- In Unreal > BP_Rifle > Details > Select a mesh component for the type of gun
+
+### 2.2.3: Create the code inside the character c++ to spawn the gun on Begin Play
+
+- #include Gun.h in both ShooterCharacter.h and ShooterCharacter.cpp
+- Create a gun class that will receive our gun blueprint by connecting our c++ code to the Unreal blueprint using TSubclassOf. Make it editable from the character blueprint
 - Spawn rifle component be shown close to our actor mesh
 - Attach scene component (BP_Rifle) to the socked of the ShooterCharacter skeleton mesh
 - Asign the owner for the rifle to be the shooter character
 
 ShooterCharacter.h
 ```cpp
+#include "CoreMinimal.h"
+#include "GameFramework/Character.h"
+#include "Gun.h"
+#include "ShooterCharacter.generated.h"
+
+
 private: 
 	UPROPERTY(EditDefaultsOnly) /*so that no one can edit it at run time*/
-	//To Spawn an object in the world from C++ we need to connect the C++ code to the Unreal Blueprint that contains the object's mesh. To do this we use TSubclassOf<>.
-		//TSubclassOf<> makes the connection between the C++ code and the blueprint. (Reflection)
+	//To Spawn an object in the world from C++ we need to connect the C++ code to the Unreal Blueprint that contains the object's mesh. To do this we use TSubclassOf<>. TSubclassOf<> makes the connection between the C++ code and the blueprint. (Reflection)
 	//Use TSubclassOf<> to declare a variable that represents the type of the class of the object we want to spawn in the world
 	TSubclassOf<AGun> GunClass;
 
@@ -89,6 +138,12 @@ private:
 
 ShooterCharacter.cpp
 ```cpp
+#include "Engine/World.h" 
+#include "Components/SkeletalMeshComponent.h" 
+#include "Gun.h"
+#include "ShooterCharacter.h"
+
+
 void AShooterCharacter::BeginPlay()
 {
 	Super::BeginPlay();
@@ -105,6 +160,10 @@ void AShooterCharacter::BeginPlay()
 	//Then go to Unreal, set the rifle in the right position in the world copy the location coordinates, then open BP_Rifle and paste the coordinates in the mesh component
 }
 ```
+
+### 2.2.3: Link our gun blueprint to our c++ gun class inside the character blueprint
+
+- In Unreal > BP_ShooterCharacter > Details > ShooterCharacter > Gun Class > select BP_Rifle
 
 
 # 3: Player Input: 
