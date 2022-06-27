@@ -180,9 +180,10 @@ void AShooterCharacter::BeginPlay()
 
 ### 3.2.1: Movement actions
 
-- In the header file, Declare the Move() and Turn() and Fire() funtions.
+- In the header file, Declare the Move() and Turn() funtions.
 - Include Speed and Turn Rate variables to fine tune the player's movements.
 
+ShooterCharacter.h
 ```cpp
  private:
 
@@ -280,7 +281,7 @@ void AGun::PullTrigger()
 }
 ```
 
-- Call the pull trigger function from inside the ShooterCharacter c++
+- Call the pull trigger function from inside Shoot() function inside the ShooterCharacter c++
 
 ShooterCharacter.h
 ```cpp
