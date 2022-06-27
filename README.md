@@ -180,6 +180,9 @@ void AShooterCharacter::BeginPlay()
 
 ### 3.2.1: Movement actions
  
+ 
+#### 3.2.1.1: Declare the callback functions
+
 - Declare the Move() and Turn() funtions.
 - Include Rotation Rate variables to fine tune the player's movements.
 
@@ -194,6 +197,8 @@ ShooterCharacter.h
   UPROPERTY(EditAnywhere)
   float RotationRate = 10;
 ```
+
+#### 3.2.1.2: Bind axis mapping to callback functions
 
 - Into the pre existing SetupPlayerInputComponent function, bind each movement function to its action mapping.
 - Bind each user input axis or action mapping to its correspondent action callback functions and create the default call back functions for move forward and move right
@@ -240,8 +245,11 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 		&ACharacter::Jump /*Address of the movement function to be called: already inherited from ACharacter so we don't need to implement it here*/
 		); 
 }
+```
 
+#### 3.2.1.3: Define callback functions
 
+```cpp
 void AShooterCharacter::MoveForward(float AxisValue)
 {
 	//Add movemen input using the specified movement vector multiplied by the axis value (if positive 1, move forward, if negative 1 backwards)
@@ -260,7 +268,7 @@ void AShooterCharacter::MoveRight(float AxisValue)
 
 ### 3.2.2: Fire / Shoot actions
 
-- Create the pull trigger function inside Gun c++ 
+#### 3.2.2.1: Create the pull trigger function inside Gun c++ 
 
 Gun.h
 ```cpp
@@ -279,6 +287,8 @@ void AGun::PullTrigger()
 }
 ```
 
+#### 3.2.2.2: Declare callback functions
+
 - Call the pull trigger function from inside Shoot() function inside the ShooterCharacter c++
 
 - Declare the Shoot() function in ShooterCharacter.h
@@ -287,6 +297,8 @@ ShooterCharacter.h
 public:
 	void Shoot();
 ```
+
+#### 3.2.2.3: Bind axis mappings to callback functions
 
 - Bind the Shoot action mapping to our Shoot() call back function
 - Declare our Shoot() callback function and call our PullTrigger function from within it 
@@ -298,7 +310,11 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 
 	InputComponent->BindAction("Shoot", IE_Pressed, this, &AShooterCharacter::Shoot);
 }
+```
 
+#### 3.2.2.4: Define callback functions
+
+```cpp
 void AShooterCharacter::Shoot()
 {
 	Gun->PullTrigger();
