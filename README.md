@@ -263,7 +263,7 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 }
 ```
 
-- In unreal > select BP_PawnPlayer > physics > set simulate physics off for both the CapsuleComponent and the BaseMesh
+- In unreal > BP_ShooterCharacter > set simulate physics off for both the CapsuleComponent and the BaseMesh
 - Make sure you move the capsule and the base mesh a little above the ground so that they don't get stuck in the terrain
 
 ### 3.2.2: Fire / Shoot actions
