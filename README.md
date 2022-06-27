@@ -198,7 +198,23 @@ ShooterCharacter.h
   float RotationRate = 10;
 ```
 
-#### 3.2.1.2: Bind axis mapping to callback functions
+#### 3.2.1.2: Define callback functions
+
+```cpp
+void AShooterCharacter::MoveForward(float AxisValue)
+{
+	//Add movemen input using the specified movement vector multiplied by the axis value (if positive 1, move forward, if negative 1 backwards)
+		//Pass in a vector * a direction value
+	AddMovementInput(GetActorForwardVector() * AxisValue);
+}
+
+void AShooterCharacter::MoveRight(float AxisValue)
+{
+	AddMovementInput(GetActorRightVector() * AxisValue);
+}
+```
+
+#### 3.2.1.3: Bind axis mapping to callback functions
 
 - Into the pre existing SetupPlayerInputComponent function, bind each movement function to its action mapping.
 - Bind each user input axis or action mapping to its correspondent action callback functions and create the default call back functions for move forward and move right
@@ -247,22 +263,6 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 }
 ```
 
-#### 3.2.1.3: Define callback functions
-
-```cpp
-void AShooterCharacter::MoveForward(float AxisValue)
-{
-	//Add movemen input using the specified movement vector multiplied by the axis value (if positive 1, move forward, if negative 1 backwards)
-		//Pass in a vector * a direction value
-	AddMovementInput(GetActorForwardVector() * AxisValue);
-}
-
-void AShooterCharacter::MoveRight(float AxisValue)
-{
-	AddMovementInput(GetActorRightVector() * AxisValue);
-}
-```
-
 - In unreal > select BP_PawnPlayer > physics > set simulate physics off for both the CapsuleComponent and the BaseMesh
 - Make sure you move the capsule and the base mesh a little above the ground so that they don't get stuck in the terrain
 
@@ -298,7 +298,16 @@ public:
 	void Shoot();
 ```
 
-#### 3.2.2.3: Bind axis mappings to callback functions
+#### 3.2.2.3: Define callback functions
+
+```cpp
+void AShooterCharacter::Shoot()
+{
+	Gun->PullTrigger();
+}
+```
+
+#### 3.2.2.4: Bind axis mappings to callback functions
 
 - Bind the Shoot action mapping to our Shoot() call back function
 - Declare our Shoot() callback function and call our PullTrigger function from within it 
@@ -309,15 +318,6 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 	InputComponent->BindAction("Shoot", IE_Pressed, this, &AShooterCharacter::Shoot);
-}
-```
-
-#### 3.2.2.4: Define callback functions
-
-```cpp
-void AShooterCharacter::Shoot()
-{
-	Gun->PullTrigger();
 }
 ```
 
