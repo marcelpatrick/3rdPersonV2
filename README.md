@@ -181,7 +181,7 @@ void AShooterCharacter::BeginPlay()
 ### 3.2.1: Movement actions
 
 - In the header file, Declare the Move() and Turn() funtions.
-- Include Speed and Turn Rate variables to fine tune the player's movements.
+- Include Rotation Rate variables to fine tune the player's movements.
 
 ShooterCharacter.h
 ```cpp
