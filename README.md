@@ -220,6 +220,10 @@ void AShooterCharacter::MoveRight(float AxisValue)
 - Bind each user input axis or action mapping to its correspondent action callback functions and create the default call back functions for move forward and move right
 - Define the action callback functions to Move forward, move right
 
+- In unreal > BP_ShooterCharacter > set simulate physics off for both the CapsuleComponent and the BaseMesh
+- Make sure you move the capsule and the base mesh a little above the ground so that they don't get stuck in the terrain
+- In Unreal > BP_ShooterCharacter > select the camera component > details > camera options > select use pawn control rotation 
+
 In ShooterCharacter.cpp
 ```cpp
  // Called to bind functionality to input
@@ -262,9 +266,6 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 		); 
 }
 ```
-
-- In unreal > BP_ShooterCharacter > set simulate physics off for both the CapsuleComponent and the BaseMesh
-- Make sure you move the capsule and the base mesh a little above the ground so that they don't get stuck in the terrain
 
 ### 3.2.2: Fire / Shoot actions
 
