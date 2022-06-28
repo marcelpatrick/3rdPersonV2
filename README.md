@@ -274,9 +274,6 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 Gun.h
 ```cpp
 public:	
-	// Sets default values for this actor's properties
-	AGun();
-
 	void PullTrigger();
 ```
 
