@@ -329,24 +329,29 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 
 in ABP_ShooterCharacter > Event Graph:
 
+Use Event Blueprint Update Animation to get update information on the pawn movements
 Use Try Get Pawn Owner to get the pawn object (BP_ShooterCharacter) and get info from the pawn about its movement.
 
-- Set Speed: TryGetPawnOwner >  GetVelocity > VectorLength > SetSpeed
-- Set Angle: TryGetPawnOwner > GetActorTransform / GetVelocity > InverseTransformDirection > RotationFromXVector > SetAngle
-	- GetActorTransform: transform to rotate the pawn by indicating where the pawn is in the world
-	- InverseTransformDirection: velocity is in global space and we should convert it to local space in order to get the angle (direction) to which the player should be going
-	- RotationFromXVector: set the yawn to know how far it is turning to the right or left. (Right click on Return Value, select "split struct pin" to get only the return for the yaw.
+- Set Jump movement, check whether the character is jumping or falling
 
-Use Event Blueprint Update Animation to get update information on the pawn movements
+	- EventBlueprintUpdateAnimation > ?IsValid > Sequence > (create an IsAirBorne bool) > link to execution pin for SetIsAirBorne
+	- TryGetPawnOwner > CastToCharacter > IsFalling > SetIsAirBorne
 
 - Set the character's aim: 
-TryGetPawnOwner > GetControlRotation / GetActorRotation > Delta (Rotator): return valueY > SetAimPitch
-EventBlueprintUpdateAnimation > ?IsValid > Sequence > Execution > SetAimPitch
-	-  Delta (Rotator): control rotation is global. we need to find the delta distance btw the actor's rotation and the global control rotation
+	- EventBlueprintUpdateAnimation > ?IsValid > Sequence > (create an SetAimPitch float) > link to execution pin for SetAimPitch
+	- TryGetPawnOwner > GetControlRotation / GetActorRotation > Delta (Rotator): return valueY > SetAimPitch
+		-  Delta (Rotator): control rotation is global. we need to find the delta distance btw the actor's rotation and the global control rotation
 
-- Set Jump movement, check whether the character is jumping or falling
-TryGetPawnOwner > CastToCharacter > IsFalling > (create an IsAirBorne bool) > SetIsAirBorne
-EventBlueprintUpdateAnimation > ?IsValid > Sequence > Execution > SetIsAirBorne
+- Set Speed: 
+	- EventBlueprintUpdateAnimation > ?IsValid > Sequence > (create an SetSpeed float) > link to execution pin for SetSpeed
+	- TryGetPawnOwner > GetVelocity > VectorLength > SetSpeed
+
+- Set Angle: 
+	- EventBlueprintUpdateAnimation > ?IsValid > Sequence > (create an SetAngle float) > link to execution pin for Angle
+	- TryGetPawnOwner > GetActorTransform / GetVelocity > InverseTransformDirection > RotationFromXVector > SetAngle
+		- GetActorTransform: transform to rotate the pawn by indicating where the pawn is in the world
+		- InverseTransformDirection: velocity is in global space and we should convert it to local space in order to get the angle (direction) to which the player should be going
+		- RotationFromXVector: set the yawn to know how far it is turning to the right or left. (Right click on Return Value, select "split struct pin" to get only the return for the yaw.
 
 ![image](https://user-images.githubusercontent.com/12215115/170245151-18316618-b9a5-4017-9e07-7052556f03cb.png)
 
