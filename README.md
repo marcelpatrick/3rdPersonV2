@@ -332,11 +332,6 @@ in ABP_ShooterCharacter > Event Graph:
 Use Event Blueprint Update Animation to get update information on the pawn movements
 Use Try Get Pawn Owner to get the pawn object (BP_ShooterCharacter) and get info from the pawn about its movement.
 
-- Set Jump movement, check whether the character is jumping or falling
-
-	- EventBlueprintUpdateAnimation > ?IsValid > Sequence > (create an IsAirBorne bool) > link to execution pin for SetIsAirBorne
-	- TryGetPawnOwner > CastToCharacter > IsFalling > SetIsAirBorne
-
 - Set the character's aim: 
 	- EventBlueprintUpdateAnimation > ?IsValid > Sequence > (create an SetAimPitch float) > link to execution pin for SetAimPitch
 	- TryGetPawnOwner > GetControlRotation / GetActorRotation > Delta (Rotator): return valueY > SetAimPitch
@@ -353,7 +348,13 @@ Use Try Get Pawn Owner to get the pawn object (BP_ShooterCharacter) and get info
 		- InverseTransformDirection: velocity is in global space and we should convert it to local space in order to get the angle (direction) to which the player should be going
 		- RotationFromXVector: set the yawn to know how far it is turning to the right or left. (Right click on Return Value, select "split struct pin" to get only the return for the yaw.
 
-![image](https://user-images.githubusercontent.com/12215115/170245151-18316618-b9a5-4017-9e07-7052556f03cb.png)
+- Set IsAirBorn: check whether the character is jumping or falling
+
+	- TryGetPawnOwner > CastToCharacter > (create a Is AirBorn bool) > link execution pin to Set IsAirBorne
+	- TryGetPawnOwner > CastToCharacter > pull from As Character > IsFalling > Set IsAirBorne
+
+![image](https://user-images.githubusercontent.com/12215115/176675996-f9ed96e5-90e7-49ec-9700-96af02bda449.png)
+
 
 ## 4.2: Animation Graph and State Machines
 
