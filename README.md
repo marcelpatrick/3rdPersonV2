@@ -287,9 +287,8 @@ void AGun::PullTrigger()
 
 #### 3.2.2.2: Declare callback functions
 
-- Call the pull trigger function from inside Shoot() function inside the ShooterCharacter c++
+- Declare our Shoot() callback function in ShooterCharacter.h 
 
-- Declare the Shoot() function in ShooterCharacter.h
 ShooterCharacter.h
 ```cpp
 public:
@@ -298,6 +297,10 @@ public:
 
 #### 3.2.2.3: Define callback functions
 
+- Define Shoot() callback function
+- Call our PullTrigger function from within Shoot() callback function inside the ShooterCharacter c++
+
+ShooterCharacter.cpp
 ```cpp
 void AShooterCharacter::Shoot()
 {
@@ -308,8 +311,6 @@ void AShooterCharacter::Shoot()
 #### 3.2.2.4: Bind axis mappings to callback functions
 
 - Bind the Shoot action mapping to our Shoot() call back function
-- Declare our Shoot() callback function and call our PullTrigger function from within it 
-ShooterCharacter.cpp
 ```cpp
 void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
