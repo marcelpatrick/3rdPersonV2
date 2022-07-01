@@ -364,6 +364,12 @@ Use Try Get Pawn Owner to get the pawn object (BP_ShooterCharacter) and get info
 - ![image](https://user-images.githubusercontent.com/12215115/173813210-4e8d38aa-505d-484f-8a4f-e1ce7b580b1a.png)
 
 - Inside the Death state add new states: Entry > Alive > Dead > Alive 
+![image](https://user-images.githubusercontent.com/12215115/176882960-988cd267-8111-4c3d-93f9-8e8263208c52.png)
+	- Create a bool "IsDead"
+	- In Alive to Dead: Get IsDead and link to result
+	- In Dead to Alive: Get IsDead > NOT > link to result
+	- Inside Dead, plug a death animation to result
+	- In Details > Anim Preview Editor > set IsDead manually to true or false and click "apply" just for testing purposes
 
 - In the Alive node 
 	- Include a new node to be our idle default pose: 
