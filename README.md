@@ -380,6 +380,8 @@ Use Try Get Pawn Owner to get the pawn object (BP_ShooterCharacter) and get info
 			- ![image](https://user-images.githubusercontent.com/12215115/173811212-86bb6ccd-abbc-4b3c-a99e-7d0757d6f448.png)
 			- In Jumping: add Jump_Start_Combat > Output animation pose
 			- ![image](https://user-images.githubusercontent.com/12215115/173811374-8d965aad-65c2-4e9e-a481-79002abc2880.png)
+			- In Jumping to Airborne: add variable > bool "IsAirborne" > get IsAirborne > Result can enter transition
+![image](https://user-images.githubusercontent.com/12215115/176880225-6544ba09-c780-4234-9f1d-87cca4d839bf.png)
 			- In Airborne: Output Animation pose > pull off result pin > Play Jump_Apex_Combat > Details > Settings > uncheck Loop Animation
 			- ![image](https://user-images.githubusercontent.com/12215115/173572214-358beef7-0414-4ea2-8428-2745513487e0.png)
 			- In Airborne to Landing: IsAirborne bool > NOT > Result
