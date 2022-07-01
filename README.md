@@ -383,6 +383,8 @@ Use Try Get Pawn Owner to get the pawn object (BP_ShooterCharacter) and get info
 			- In Grounded: 
 			- Create a new Blend Space animation to make a soft transition between different animations 	
 				- In Unreal > Add New > Animation > Blend Space > select Wraith skeleton > "BS_Locomotion"
+				- Inside BS_Locomotion, go in details > asset browser > and drag in the animations to each movement node: 
+				- ![image](https://user-images.githubusercontent.com/12215115/176886649-76f35080-51e2-457c-a551-9a4b04a5f99b.png)
 			- Get Angle var / Get Speed var > BS_Locomotion > Output animation pose
 			- ![image](https://user-images.githubusercontent.com/12215115/173811140-ca45782f-8f6a-40fb-b3cb-72311d7ae217.png)
 			- In Grounded to Jumping: add variable > bool "IsAirborne" > get IsAirborne > Result can enter transition
