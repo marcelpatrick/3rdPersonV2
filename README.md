@@ -367,7 +367,7 @@ Use Try Get Pawn Owner to get the pawn object (BP_ShooterCharacter) and get info
 
 - In the Alive node 
 	- Include a new node to be our idle default pose: 
-		- "Idle_AO_Combat" > Output animation pose
+		- From Asset Browser, pull in "Idle_AO_Combat" > Output animation pose
 	- Adjust the pitch for our default pose in the AnimGraph according to our aim, so that the character can aim up, down:
 		- Idle_AO_Combat > right click on Pitch > promote to variable > "AimPitch"
 		- ![image](https://user-images.githubusercontent.com/12215115/173802505-381098c3-37d6-408b-8866-3417a4a43213.png)
