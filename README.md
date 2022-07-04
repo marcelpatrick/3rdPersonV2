@@ -333,7 +333,7 @@ Use Event Blueprint Update Animation to get update information on the pawn movem
 Use Try Get Pawn Owner to get the pawn object (BP_ShooterCharacter) and get info from the pawn about its movement.
 
 - Set the character's aim: 
-	- EventBlueprintUpdateAnimation > ?IsValid > Sequence > (create an SetAimPitch float) > link to execution pin for SetAimPitch
+	- EventBlueprintUpdateAnimation / TryGetPawnOwner > ?IsValid > Sequence > (create an SetAimPitch float) > link to execution pin for SetAimPitch
 	- TryGetPawnOwner > GetControlRotation / GetActorRotation > Delta (Rotator): return valueY > SetAimPitch
 		-  Delta (Rotator): control rotation is global. we need to find the delta distance btw the actor's rotation and the global control rotation
 
@@ -353,8 +353,7 @@ Use Try Get Pawn Owner to get the pawn object (BP_ShooterCharacter) and get info
 	- TryGetPawnOwner > CastToCharacter > (create a Is AirBorn bool) > link execution pin to Set IsAirBorne
 	- TryGetPawnOwner > CastToCharacter > pull from As Character > IsFalling > Set IsAirBorne
 
-![image](https://user-images.githubusercontent.com/12215115/176675996-f9ed96e5-90e7-49ec-9700-96af02bda449.png)
-
+![image](https://user-images.githubusercontent.com/12215115/177144889-7528cd9b-b76d-4940-9299-f9eca5d08885.png)
 
 ## 4.2: Animation Graph and State Machines
 
