@@ -349,11 +349,10 @@ Use Try Get Pawn Owner to get the pawn object (BP_ShooterCharacter) and get info
 		- RotationFromXVector: set the yawn to know how far it is turning to the right or left. (Right click on Return Value, select "split struct pin" to get only the return for the yaw.
 
 - Set IsAirBorn: check whether the character is jumping or falling
+	- TryGetPawnOwner / sequence execution pin > CastToCharacter > (create a Is AirBorn bool) > link execution pin to Set IsAirBorne
+	- TryGetPawnOwner > CastToCharacter (object) > pull from As Character > IsFalling > Set IsAirBorne
 
-	- TryGetPawnOwner > CastToCharacter > (create a Is AirBorn bool) > link execution pin to Set IsAirBorne
-	- TryGetPawnOwner > CastToCharacter > pull from As Character > IsFalling > Set IsAirBorne
-
-![image](https://user-images.githubusercontent.com/12215115/177144889-7528cd9b-b76d-4940-9299-f9eca5d08885.png)
+![image](https://user-images.githubusercontent.com/12215115/177312724-86f06761-4cda-4af9-b781-72260ff46eca.png)
 
 ## 4.2: Animation Graph and State Machines
 
