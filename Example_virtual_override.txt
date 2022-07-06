@@ -1,0 +1,77 @@
+#include <iostream>
+#include <string>
+
+class Gun
+{
+    public:
+    void Shoot()
+    {
+        std::cout << "Gun!!!" << std::endl;
+    }
+};
+
+class Pistol : public Gun //inherits from Gun
+{
+    public:
+    void Shoot()
+    {
+        std::cout << "Pistol!!!!" << std::endl;
+    }
+};
+
+class Gun2
+{
+    public:
+    virtual void Shoot()
+    {
+        std::cout << "Gun _ 2_ !!!" << std::endl;
+    }
+};
+
+class Pistol2 : public Gun2 //inherits from Gun2
+{
+    public:
+    void Shoot() override
+    {
+        std::cout << "Pistol_2_  !!!!" << std::endl;
+    }
+};
+
+
+int main()
+{
+    Gun MyGun;
+
+    Pistol MyPistol;
+    
+    //create a gun pointer, assign it to our gun variable and call its shoot method
+    Gun* GunPtr;
+    GunPtr = &MyGun;
+    GunPtr->Shoot();
+    
+    //now assign gun pointer to our Pistol variable and call its shoot method
+    GunPtr = &MyPistol;
+    GunPtr->Shoot();
+    
+    //Pointers will always call the functions respective to the type of pointer not to where the address is pointing it
+    
+    //Override the functions of the pointer type and call the functions of the variable to which the pointer is pointing
+        //include "virtual" before void Shoot() in the parent class and "override" after void Shoot() in the child class
+        //only works if the class of the variable to which the pointer is pointing inherits the class of the pointer type (ex. Actor, BeginPlay)
+        //"virtual" means that this method can be overriden from the child class. "overrride" means that this method will override the correspondent method in the parent class
+        //when it is not possible to change pointer types, ex when using Actor or BeginPlay classes, I cannot create my own Actor or BeginPlay classes, I have to use these standard classes from Unreal Engine
+            //when I call BeginPlay I want to call my BeginPlay and not the Unreal Engines standard BeginPlay
+        
+    Gun2 MyGun2;
+
+    Pistol2 MyPistol2;
+    
+    //create a gun pointer, assign it to our gun variable and call its shoot method
+    Gun2* GunPtr2;
+    GunPtr2 = &MyGun2;
+    GunPtr2->Shoot();
+    
+    //now assign gun pointer to our Pistol variable and call its shoot method
+    GunPtr2 = &MyPistol2;
+    GunPtr2->Shoot();
+}
