@@ -430,38 +430,42 @@ private:
 
 Gun.cpp
 ```cpp
-bool AGun::GunTrace(
-	FHitResult& Hit, /*a hit result out param (will be modified by this function), with an & because it is a reference to this variable's address*/
-	FVector& ShotDirection /*a shot direction out param (will be modified by this function)*/
-	)
+
+bool AGun::GunTrace(FHitResult& Hit /*a hit result out param (will be modified by this function), with an & because it is a reference to this variable's address*/,
+				 FVector& ShotDirection /*a shot direction out param (will be modified by this function)*/)
 {
-	AController* OwnerController = GetOwnerController();
+	//Call the GetOwnerController() function to get the controller and assign it to a AController variable
+	AController* OwnerController = GetOwnerController(); 
 
-	if (OwnerController == nullptr) return false;
-
-	FVector Location; //Line trace start point
+	//Get Player's location and rotation
+	FVector Location;
 	FRotator Rotation;
 
-	OwnerController->GetPlayerViewPoint(Location, Rotation); //Location and Rotation are out parameters because are being modified inside this function
+		//Use GetPlayerViewPoint to fill in the Location and Rotation variables as out paramters
+	OwnerController->GetPlayerViewPoint(Location, Rotation);
 
-	//Get where the shot was coming from, which is the oposite of the shot direction coming our of the gun
-	ShotDirection = - Rotation.Vector();
+	//Create a line trace for the bullet
 
-	//Create a line trace for the bullet that tells us which object it has hit
+		//Declare and define variable with the shot starting point (it is going to come from where the player stands)
+		FVector Start = Location;
 
-	//Create an endpoint for our line trace
-		//End point of a vector = Start point + range of the vector * direction of the vector
-	FVector End = Location + Rotation.Vector() * MaxRange;
+		//Declare and define a variable with the shot direction (it will point to where the player is pointing)
+			//Rotation.Vector() gets a vector that points in the direction to which the rotation is pointing of size = 1
+		ShotDirection = Rotation.Vector();
 
-	//Define actors that should be ignored by the gun line tracing so that we don't shoot ourselves and pass these as params in the line trace method below
-	FCollisionQueryParams Params;
-	Params.AddIgnoredActor(this);
-	Params.AddIgnoredActor(GetOwner());
+		//Declare and define a variable with the shot end point
+		FVector End = Start + ShotDirection * MaxRange;
 
-	//Line trace by channel makes the system search through this line and define which types of object can block our bullet and which can't
+		//Define actors that should be ignored: this and GetOwner() so that the actor doesn't shoot itself
+		FCollisionQueryParams Params;
+		Params.AddIgnoredActor(this);
+		Params.AddIgnoredActor(GetOwner());
+
+	//Return LineTraceBySingleChannel passing Hit result, Start point, End point, the collision channel, and settings params
 		//Set our custom trace channel in Project Settings > Collision > Trace Channels > define presets to define interaction with each type of objects
 		//Fetch the enum of the collision channel for our bullet in Project Folder > Config > Default Engine > search for the name of the custom collision channel we crated, "Bullet" and see which channel was asigned to it
-	return GetWorld()->LineTraceSingleByChannel(Hit, Location, End, ECollisionChannel::ECC_GameTraceChannel1, Params);
+	return GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECollisionChannel::ECC_GameTraceChannel1, Params);
+
 }
 
 AController* AGun::GetOwnerController() const
@@ -475,6 +479,7 @@ AController* AGun::GetOwnerController() const
 	//Get the controller for the gun owner
 	return OwnerPawn->GetController();
 }
+
 ```
 
 - in Gun.cpp, Call the GunTrace() function from inside the PullTrigger() function and asign the result to a bool
