@@ -501,31 +501,45 @@ void AGun::PullTrigger()
 	- Get a hold of the actor we will damage
 	- Call the custom TakeDamage() function that Gun is inheriting from the parent actor class
 
+Gun.h
+```cpp
+	UPROPERTY(EditAnywhere)
+	float DamageAmount = 100;
+```
+
 Gun.cpp
 ```cpp
 void AGun::PullTrigger()
 {
+	UE_LOG(LogTemp, Warning, TEXT("vc puxou o gatilho"));
+
+	FHitResult Hit;
+	FVector ShotDirection;
+	bool bSuccess = GunTrace(Hit, ShotDirection); //Hit and ShotDirections are out params - will have their values assigned by this function
+
+	//If the shot hit something
 	if (bSuccess)
 	{
-		//Then include the impact effect in BP_Rifle
-
+		//Get the actor that got hit
 		AActor* HitActor = Hit.GetActor();
 
-		//Get the actor to be damaged
-		if (Hit.GetActor() != nullptr)
+		//And if this something we hit was an actor
+		if (HitActor != nullptr)
 		{
-			AController* Instigator = Cast<AController>(HitActor->GetInstigator()); 
+			//Fill in a DamageEvent struct
+				//FPointDamageEvent is a category of damage event that is applied to a specific point
+				//It is also of type "struct" - struct is like an array that can take different types of variables at the same time
+				//by doing FPointDamageEvent DamageEvent(values) we are initializing this struct of type FPointDamageEvent and already filling it the values for each of its correspondent variables
+				//Then we will pass this struct filled in with values in our TakeDamage function below
+			FPointDamageEvent DamageEvent(DamageAmount, Hit, ShotDirection, nullptr);
 
-			//Apply Damange
-			FPointDamageEvent DamageEvent(Damage, Hit, ShotDirection, nullptr); //this last param allows to define a specifit TSubclassOf UDamageType, but since we are not using it we will just pass a nullptr
-			
-			AController* OwnerController = GetOwnerController();
+			//Get the Damage Instigator
+			AController* Instigator = Cast<AController>(HitActor->GetInstigator());
 
-			HitActor->TakeDamage(
-				Damage, 
-				DamageEvent, 
-				OwnerController /*the controller of this pawn is also the instigator of the applyed damaged*/,
-			 	this); 
+			//Apply damage to the actor that got hit
+			HitActor->TakeDamage(DamageAmount, DamageEvent, Instigator, this);
+
+			UE_LOG(LogTemp, Warning, TEXT("vc atingiu o ator: %s"), HitActor);
 		}
 	}
 }
