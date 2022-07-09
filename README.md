@@ -590,14 +590,6 @@ float AShooterCharacter::TakeDamage(float DamageAmount, struct FDamageEvent cons
 
 	UE_LOG(LogTemp, Warning, TEXT("Your current Health is %f"), Health);
 	
-	if (IsDead())
-	{
-
-		//Stop the character from being controlled - moved.
-		DetachFromControllerPendingDestroy();
-		//Switch off capsule collision 
-		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	}
 	return DamageToApply;
 }
 ```
@@ -625,6 +617,18 @@ ShooterCharacter.cpp
 bool AShooterCharacter::IsDead() const
 {
 	return Health <= 0;	
+}
+
+float AShooterCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser)
+{
+	if (IsDead())
+	{
+
+		//Stop the character from being controlled - moved.
+		DetachFromControllerPendingDestroy();
+		//Switch off capsule collision 
+		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
 }
 ```
 
