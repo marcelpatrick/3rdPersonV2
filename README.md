@@ -600,6 +600,8 @@ float AShooterCharacter::TakeDamage(float DamageAmount, struct FDamageEvent cons
 
 ShooterCharecter.h
 ```cpp
+#include "Components/CapsuleComponent.h" 
+
 public:	
 	// Create a function that can be accessed from the character blueprint - BlueprintPure and const function
 		//a pure node is a node that doesn't have an execution pin - doesn't have any effect on the thing that it is calling, only on its result
@@ -607,9 +609,6 @@ public:
 		//It doesn't change anything globally. the only impact it has are the outputs that it produces.
 	UFUNCTION(BlueprintPure)
 	bool IsDead() const;
-
-	UFUNCTION(BlueprintPure)
-	float GetHealthPercent() const;
 ```
 
 ShooterCharacter.cpp
