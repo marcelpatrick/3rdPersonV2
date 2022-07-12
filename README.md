@@ -653,7 +653,7 @@ float AShooterCharacter::TakeDamage(float DamageAmount, struct FDamageEvent cons
 # 2: Player Input: AI Aiming, AI firing, AI movement (with Behavior Trees)
 
 - Set AI Path finder: create a mesh to tell the AI where in the world it can navigate
-	- In Unreal: Window > Place actors > Nav Mesh Bounds Volume > drag it into the world and put it through the floor
+	- In Unreal: Modes > search for Nav Mesh Bounds Volume > drag it into the world and put it through the floor
 	- In Unreal, in the world screen > Show > check Navigation
 	- Increase nav mesh X and Y sizes to encompass the entire level
 
