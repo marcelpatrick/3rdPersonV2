@@ -646,7 +646,7 @@ float AShooterCharacter::TakeDamage(float DamageAmount, struct FDamageEvent cons
 # 1: Create Components
 
 - Include a new BP_ShooterCharacter in the world to be our enemy
-- Create a new AI Controller class, name ShooterAIController. 
+- Create a new c++ inheriting from AI Controller class, name ShooterAIController. 
 - Create e new BP to be child from the ShooterAIController class: BP_ShooterAIController
 - In Unreal, open BP_ShooterCharacter > details > Pawn > AIController Class > choose BP_ShooterAIController
 
