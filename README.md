@@ -652,6 +652,10 @@ float AShooterCharacter::TakeDamage(float DamageAmount, struct FDamageEvent cons
 
 # 2: Player Input: AI Aiming, AI firing, AI movement (with Behavior Trees)
 
+Hook up the blueprints: 
+- Animation: BP_ShooterCharacter > hooked to Anim Class: ABP_ShooterCharacter > hooked to Mesh: Wraith
+- AI: BP_ShooterCharacter > hooked to AI Controller Class: BP_ShooterAIController > hooked to behavior tree AIBehavior: BT_EnemyAI
+
 - Set AI Path finder: create a mesh to tell the AI where in the world it can navigate
 	- In Unreal: Modes > search for Nav Mesh Bounds Volume > drag it into the world and put it through the floor
 	- In Unreal, in the world screen > Show > check Navigation
