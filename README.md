@@ -741,6 +741,13 @@ void AShooterAIController::BeginPlay()
 	- SELECTOR runs all behaviors in the tree until the first one succeeds. Moves through the ones that fail. Stops when succeeds. Performs only one task (the first that is viable)
 	- SEQUENCE runs all behaviors until one of the fails. Runs all behaviors that succeed. Stops when fails. Performs all tasks that are viable.
  
+ - Include AIModule and GameTasks as Dependency Modules inside the project build:
+ 
+ in [ProjectName].Build.cs:
+ ```cpp
+ PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "AIModule", "GameplayTasks" });
+ ```
+
  - include a SERVICE to Update the Player Location in the AI location memory (PlayerLocation) var only if the player is seen by the AI
  	- Create a new BTService class: In Unreal > Add New > New C++ class > show all classes > BTService_BlackboardBase: call it BTService_PlayerLocationIfSeen
  	- BTService_BlackboardBase is a custom service that allows us to refer to the variables or keys we included in the Blackboard
