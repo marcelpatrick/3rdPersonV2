@@ -737,11 +737,12 @@ void AShooterAIController::BeginPlay()
 #### 2.4.1: Update player location if seen
 
 - If AI sees player, updated player location in the AI memory
-- In BT_EnemyAI, Behavior Tree section, After Root, include a SELECTOR to shift between behavior nodes and include a SERVICE to Update the Player Location in the AI location memory (PlayerLocation) var only if the player is seen by the AI
+- In BT_EnemyAI, Behavior Tree section, After Root, include a SELECTOR to shift between behavior nodes
 	- SELECTOR runs all behaviors in the tree until the first one succeeds. Moves through the ones that fail. Stops when succeeds. Performs only one task (the first that is viable)
 	- SEQUENCE runs all behaviors until one of the fails. Runs all behaviors that succeed. Stops when fails. Performs all tasks that are viable.
  
- - Create a new BTService class: In Unreal > Add New > New C++ class > show all classes > BTService_BlackboardBase: call it BTService_PlayerLocationIfSeen
+ - include a SERVICE to Update the Player Location in the AI location memory (PlayerLocation) var only if the player is seen by the AI
+ 	- Create a new BTService class: In Unreal > Add New > New C++ class > show all classes > BTService_BlackboardBase: call it BTService_PlayerLocationIfSeen
  	- BTService_BlackboardBase is a custom service that allows us to refer to the variables or keys we included in the Blackboard
  - Implement the Tick function
  
