@@ -781,6 +781,7 @@ public:
 	- IF AI line of sight reaches PlayerPawn
 	- Update the selected blackboard key value with PlayerPawn
 	- Otherwise clear the value of the selected blackboard key
+	- If PlayerPawn or AIOwner are nullptr, return
 
  BTService_PlayerLocationIfSeen.h
  ```cpp
