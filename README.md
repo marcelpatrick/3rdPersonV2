@@ -750,9 +750,10 @@ void AShooterAIController::BeginPlay()
 
  - include a SERVICE to Update the Player Location in the AI location memory (PlayerLocation) var only if the player is seen by the AI
  	- Create a new BTService class: In Unreal > Add New > New C++ class > show all classes > BTService_BlackboardBase: call it BTService_PlayerLocationIfSeen
- 	- BTService_BlackboardBase is a custom service that allows us to refer to the variables or keys we included in the Blackboard
- - Implement the Tick function
- 
+	- BTService_BlackboardBase is a custom service that allows us to refer to the variables or keys we included in the Blackboard
+
+##### 2.4.1.1: Implement the Constructor and give this Behavior Tree node a name
+
  BTService_PlayerLocationIfSeen.h
  ```cpp
  class SIMPLESHOOTER_API UBTService_PlayerLocationIfSeen : public UBTService_BlackboardBase
@@ -762,20 +763,36 @@ void AShooterAIController::BeginPlay()
 public:
 	//Constructor
 	UBTService_PlayerLocationIfSeen();
-
-protected:
-	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
-	
-};
+} 
  ```
  
-  BTService_PlayerLocationIfSeen.cpp
+ BTService_PlayerLocationIfSeen.cpp
  ```cpp
  UBTService_PlayerLocationIfSeen::UBTService_PlayerLocationIfSeen()
 {
     NodeName = "Update Player Location If Seen";
 }
+```
 
+##### 2.4.1.2: Implement the Tick Node Function
+ 
+- Get PlayerPawn
+- Use the OwnerComp class to: 
+	- IF AI line of sight reaches PlayerPawn
+	- Update the selected blackboard key value with PlayerPawn
+	- Otherwise clear the value of the selected blackboard key
+
+ BTService_PlayerLocationIfSeen.h
+ ```cpp
+ class SIMPLESHOOTER_API UBTService_PlayerLocationIfSeen : public UBTService_BlackboardBase
+{
+protected:
+	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
+};
+ ```
+ 
+  BTService_PlayerLocationIfSeen.cpp
+ ```cpp
 //update next tick interval if the code passes through this node in the behavior tree
 void UBTService_PlayerLocationIfSeen::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
