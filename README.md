@@ -848,7 +848,7 @@ void UBTService_PlayerLocationIfSeen::TickNode(UBehaviorTreeComponent& OwnerComp
   - After the selector > Add a new sequence called Investigate 
   - Add a new Move To node after Investigate > in details > blackboard > blackboard key = LastKnownPlayerLocation
   - Click on the "Can See Player" Blackboard decorator > In details > flow control > observer aborts > select both : it aborts both the nodes in the selector (Chase and Investigate) in case something fails.
-  -  Right click on the Investigate sequence > Add a decorator of type Blackboard > call it "has Investigated?" > in details > Blackboard > key query = is set > blackboard key = LastKnowPlayerLocation
+  -  Right click on the Investigate sequence > Add a decorator of type Blackboard > call it "has Investigated?" > in details > Blackboard > key query = is set > blackboard key = StartLocation
  
  ![image](https://user-images.githubusercontent.com/12215115/173561584-e8da652a-1ccc-466f-be6e-14eda9863b3f.png)
 
