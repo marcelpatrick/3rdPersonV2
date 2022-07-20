@@ -829,17 +829,17 @@ void UBTService_PlayerLocationIfSeen::TickNode(UBehaviorTreeComponent& OwnerComp
  - In BT_EnemyAI > BehaviorTree: right click on the SELECTOR > add service > select our custom service "Player Location If Seen"
  - In BT_EnemyAI > BehaviorTree: details > blackboard key > select: PlayerLocation
 
-![image](https://user-images.githubusercontent.com/12215115/173561306-09784283-f638-4b78-9181-e29ab0a39865.png)
+![image](https://user-images.githubusercontent.com/12215115/179962968-c928490d-1b65-4e29-b494-2a493c967f31.png)
 
 #### 2.4.2: Can See Player ? > Chase Player
  
  - After the selector > Add a new sequence called Chase 
- - Right click on the Chase sequence > Add a decorator of type Blackboard > call it "Can See Player?" > in details > Blackboard > key query = is set > blackboard key = Player
+ - Right click on the Chase sequence > Add a decorator of type Blackboard > call it "Can See Player?" > in details > Blackboard > key query = is set > blackboard key = PlayerLocation
  	- Blackboard condition node: only executes the sequence based on a condition related to a blackboard variable: if PlayerLocation is set
- - Add a new Move To node after Chase > in details > blackboard > blackboard key = Player
+ - Add a new Move To node after Chase > in details > blackboard > blackboard key = PlayerLocation
  - in Details > Blackboard > check Observer Blackboard value
  
- ![image](https://user-images.githubusercontent.com/12215115/173561461-008691dd-545f-4959-800e-b431c75b2402.png)
+![image](https://user-images.githubusercontent.com/12215115/179962887-c9738e09-9937-47d4-b662-79afec403e6e.png)
 
  #### 2.4.3: Has Investigated? > Investigate
  
@@ -848,9 +848,9 @@ void UBTService_PlayerLocationIfSeen::TickNode(UBehaviorTreeComponent& OwnerComp
   - After the selector > Add a new sequence called Investigate 
   - Add a new Move To node after Investigate > in details > blackboard > blackboard key = LastKnownPlayerLocation
   - Click on the "Can See Player" Blackboard decorator > In details > flow control > observer aborts > select both : it aborts both the nodes in the selector (Chase and Investigate) in case something fails.
-  -  Right click on the Investigate sequence > Add a decorator of type Blackboard > call it "has Investigated?" > in details > Blackboard > key query = is set > blackboard key = StartLocation
+  -  Right click on the Investigate sequence > Add a decorator of type Blackboard > call it "has Investigated?" > in details > Blackboard > key query = is set > blackboard key = LastKnonwPlayerLocation
  
- ![image](https://user-images.githubusercontent.com/12215115/173561584-e8da652a-1ccc-466f-be6e-14eda9863b3f.png)
+![image](https://user-images.githubusercontent.com/12215115/179962752-ac2dd412-1e60-4a4f-89a9-00d8aa4a997d.png)
 
   #### 2.4.3.1: Custom Tasks: Clear Blackboard Value
   
