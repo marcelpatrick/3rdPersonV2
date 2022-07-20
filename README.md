@@ -858,7 +858,6 @@ void UBTService_PlayerLocationIfSeen::TickNode(UBehaviorTreeComponent& OwnerComp
   
  - Create a new BTTask class: In Unreal > Add New > New C++ class > show all classes > BTTask_BlackboardBase: call it BTTask_ClearBlackboardValue
  	- BTTask_BlackboardBase is a custom Task that allows us to refer to the variables or keys we included in the Blackboard
- - In Visual Studio, open SimpleShooter.Build.cs, inside the PublicDependencyModuleNames.AddRange function, add "GameplayTasks" to the list and compile
 
 - Create a public constructor
 - Implement the Execute Task which we are going to use to access memory variables on Blackboard from our code and then clear the one related to LastKnowPlayerLocation
