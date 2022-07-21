@@ -1125,6 +1125,10 @@ void UBTService_PlayerLocationIfSeen::TickNode(UBehaviorTreeComponent& OwnerComp
 
 - In our Behavior tree, include this custom service in the SELECTOR node > right click on the node > add service > Player Location If Seen > the service will be named "Update Player Location If Seen" > change its BlackboardKey variable to "Player"
 
+#### Difference between BTTasks and BTServices
+	- Tasks are used for descrete action which the AI does and stops. Eg. Move to, Shoot once and stop etc
+	- Services are used for continuous actions that require a lot of memory because they run all the time. Eg. Keep shooting as long as you are seing the player, keep updating the player location constantly so that the AI can keep chasing the player around etc. 
+	
 
 # ITERATION 3: Game Mode and Effects
 
