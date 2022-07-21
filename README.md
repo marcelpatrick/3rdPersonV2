@@ -859,31 +859,43 @@ void UBTService_PlayerLocationIfSeen::TickNode(UBehaviorTreeComponent& OwnerComp
  - Create a new BTTask class: In Unreal > Add New > New C++ class > show all classes > BTTask_BlackboardBase: call it BTTask_ClearBlackboardValue
  	- BTTask_BlackboardBase is a custom Task that allows us to refer to the variables or keys we included in the Blackboard
 
-- Create a public constructor
-- Implement the Execute Task which we are going to use to access memory variables on Blackboard from our code and then clear the one related to LastKnowPlayerLocation
-	- Tasks are types of behavior we can assign to a specific node inside a behavior tree. There are 4 types of tasks: ExecuteTask, AbortTask, TickTask, OnMessage
+  #### 2.4.3.1.1: Implement a public Constructor and give this Behavior Tree node a name
 
 BTTask_ClearBlackboardValue.h
 ```cpp
 public:
 	//Constructor of this class
 	UMyBTTask_ClearBlackboardValue();
-	
-protected:
-	//protected because this function is in the default section
-	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 ```
 
-- define the name of this node
 BTTask_ClearBlackboardValue.cpp
 ```cpp
 //allows us to clear any variable in the blackboard. will clear last know location so that the AI goes back to the initial position if he does not see me
 
 UMyBTTask_ClearBlackboardValue::UMyBTTask_ClearBlackboardValue()
 {
-    NodeName = TEXT("Clear Blackboard Value");
+    NodeName = "Clear Blackboard Value";
 }
+```
 
+  #### 2.4.3.1.2: Implement a NodeResult containing a ExecuteTask function for this node
+ 
+- Implement a NodeResult
+	- There are 4 types of NodeResults: Succeeded, Failed, Aborted, InProgress
+	- A NodeResult must return something. Return Succeeded.
+- Inside the NodeResult Implement the Execute Task which we are going to use to access memory variables on Blackboard from our code and then clear the one related to LastKnowPlayerLocation
+	- Tasks are types of behavior we can assign to a specific node inside a behavior tree. 
+	- There are 4 types of tasks: ExecuteTask, AbortTask, TickTask, OnMessage
+
+BTTask_ClearBlackboardValue.h
+```cpp
+protected:
+	//protected because this function is in the default section
+	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
+```
+
+BTTask_ClearBlackboardValue.cpp
+```cpp
 //"Execute task": do this function when the task starts executing
 EBTNodeResult::Type UMyBTTask_ClearBlackboardValue::ExecuteTask(
     UBehaviorTreeComponent& OwnerComp, /*access our behavior tree component*/
