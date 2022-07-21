@@ -886,6 +886,9 @@ UMyBTTask_ClearBlackboardValue::UMyBTTask_ClearBlackboardValue()
 - Inside the NodeResult Implement the Execute Task which we are going to use to access memory variables on Blackboard from our code and then clear the one related to LastKnowPlayerLocation
 	- Tasks are types of behavior we can assign to a specific node inside a behavior tree. 
 	- There are 4 types of tasks: ExecuteTask, AbortTask, TickTask, OnMessage
+		- Call Super
+		- Get the selected blackboard key and clear its value
+		- Return Succeeded
 
 BTTask_ClearBlackboardValue.h
 ```cpp
