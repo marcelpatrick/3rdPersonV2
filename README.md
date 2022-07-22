@@ -931,21 +931,16 @@ EBTNodeResult::Type UMyBTTask_ClearBlackboardValue::ExecuteTask(
  ### 2.4.5: Shoot
   
   - In Unreal > Add New > New C++ class > select BTTaskNode > rename to BTTask_Shoot
-  - Implement the BTTask_Shooter constructor
-  - Implement the ExecuteTask to get hold of the AI Controller and the AI Pawn, pass it in a Character variable, and them call the Shoot() method from this variable
-  - Inside ShooterCharacter.h, make the Shoot() method public to allow it to be called from outside of this class
 
-in BTTask_Shoot.h
+ ### 2.4.5.1: Implement the BTTask_Shooter constructor
+ 
+  - Define a NodeName
+ 
+ in BTTask_Shoot.h
 ```cpp
 public:
-
 	//Contructor
 	UBTTask_Shoot();
-
-protected:
-
-	//Execution
-	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent &OwnerComp, uint8 *NodeMemory) override;
 ```
 
 in BTTask_Shoot.cpp
@@ -955,7 +950,25 @@ UBTTask_Shoot::UBTTask_Shoot()
 {
     NodeName = TEXT("Shoot");
 }
+```
 
+ ### 2.4.5.2: Define the EBTExecuteTask and return a EBTNodeResult
+ 
+  - Return a node result Failed If AI Controller is a nullptr
+  - Implement the ExecuteTask to get hold of the AI Controller and the AI Pawn. Create a var based on out ShooterCharacter class and pass it in the value of the AI Pawn
+  - Return a node result Failed if this var is a nullptr
+  - Inside ShooterCharacter.h, make the Shoot() method public to allow it to be called from outside of this class
+  - And them call the Shoot() method from this variable
+
+in BTTask_Shoot.h
+```cpp
+protected:
+	//Execution
+	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent &OwnerComp, uint8 *NodeMemory) override;
+```
+
+in BTTask_Shoot.cpp
+```cpp
 //Define the execute task - that is what this custom task is going to do
 EBTNodeResult::Type UBTTask_Shoot::ExecuteTask(
     UBehaviorTreeComponent &OwnerComp, /* Address to access our behavior tree component*/
