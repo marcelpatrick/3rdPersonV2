@@ -1088,7 +1088,7 @@ EBTNodeResult::Type UBTTask_Shoot::ExecuteTask(
 - Will use our custom KillEmAllGameMode that will be derived from and implement the default main game mode, SimpleShooterGameMode
 
 ## 1.1: Pawn Killed function
-- Define a function for when the actors are killed: Use our custom PawnKilled() method in KillEmAllGameMode which will override the virtual PawnKilled() method in the parent SimpleShooterGameModeBase.
+- Define a function for when the actors are killed, PawnKilled() method, to be called from SimpleShooterGameModeBase
 
 SimpleShooterGameModeBase.h
 ```cpp
@@ -1106,7 +1106,7 @@ void ASimpleShooterGameModeBase::PawnKilled(APawn* PawnKilled)
 
 - Create a subclass of SimpleShooterGameModeBase: In Unreal > add new > new C++ class > show all classes > SimpleShooterGameModeBase > "KillEmAllGameMode"
 - in KillEmAllGameMode > details > default pawn class > select our main player: BP_PlayerShooterCharacter
-- If actor is dead, get hold of game mode and call the pawn killed.
+- Also implement PawnKilled() in KillEmAllGameMode which will override the virtual PawnKilled() method in the parent SimpleShooterGameModeBase.
 
 ShooterCharacter.cpp
 ```cpp
