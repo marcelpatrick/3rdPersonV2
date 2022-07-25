@@ -836,12 +836,68 @@ void UBTService_PlayerLocationIfSeen::TickNode(UBehaviorTreeComponent& OwnerComp
  - After the selector > Add a new sequence called Chase 
  - Right click on the Chase sequence > Add a decorator of type Blackboard > call it "Can See Player?" > in details > Blackboard > key query = is set > blackboard key = PlayerLocation
  	- Blackboard condition node: only executes the sequence based on a condition related to a blackboard variable: if PlayerLocation is set
- - Add a new Move To node after Chase > in details > blackboard > blackboard key = PlayerLocation
- - in Details > Blackboard > check Observer Blackboard value
+
+#### 2.4.3: Update Player Location / LastKnownPlayerLocation
+
+- Create a C++ class to customize the actions of this service in code
+- In Unreal > Add New > New C++ class > show all classes > BTService_BlackboardBase > BTService_PlayerLocation
+
+##### 2.4.3.1: Constructor
+
+- Add a constructor function and name the node
+
+BTService_PlayerLocation.h
+```cpp
+public:
+	//Contructor - which is the name of the class
+	UBTService_PlayerLocation();
+```
+
+BTService_PlayerLocation.cpp
+```cpp
+UBTService_PlayerLocation::UBTService_PlayerLocation()
+{
+    NodeName = "Update Player Location";
+}
+```
+
+##### 2.4.3.2: Tick Function
+
+- Define the tick function: For every tick, get the updated player location
+
+BTService_PlayerLocation.h
+```cpp
+protected:
+	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
+```
+
+- In cpp > Get Player Pawn > Get blackboard component > Get Selected Blackboard key > get actor location
+	
+BTService_PlayerLocation.cpp
+```cpp
+//update next tick interval if the code passes through this node in the behavior tree
+void UBTService_PlayerLocation::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
+{
+    Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
+
+    APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+
+    if (PlayerPawn == nullptr)
+    {
+        return;
+    }
+
+    OwnerComp.GetBlackboardComponent()->SetValueAsVector(GetSelectedBlackboardKey(), PlayerPawn->GetActorLocation());
+}
+```
+
+##### 2.4.3.3: Set the class in our behavior tree
+
+- In our Behavior tree, include this custom service in the Chase node > right click on the Chase node > add service > Player Location > the service will be named "Update Player Location" > change its BlackboardKey variable to "LastKnownPlayerLocation"
  
 ![image](https://user-images.githubusercontent.com/12215115/179962887-c9738e09-9937-47d4-b662-79afec403e6e.png)
 
- #### 2.4.3: Has Investigated? > Investigate
+ #### 2.4.4: Has Investigated? > Investigate
  
  - Go to where the player was seen last. if LastKnowPlayer location is set (if AI saw where player was last) then walk there to investigate.
  
@@ -1015,6 +1071,60 @@ EBTNodeResult::Type UBTTask_Shoot::ExecuteTask(
 - In Unreal > BT_EnemyAI > in the Chase node > right click and select add Service > Default Focus > in Details > Blackboard key > select the Player variable
 	
 ![image](https://user-images.githubusercontent.com/12215115/173563080-e1b2bd95-5e4c-4cda-854a-0da020490cc1.png)
+
+##### 2.4.5.1.2: Custom Services
+
+###### 2.4.5.1.2.1: Update LastKnownPlayerLocation
+- Create Services to update LastKnownPlayerLocation from the behavior tree while the AI is chasing the player (while the Chase node is active)
+
+####### 2.4.5.1.2.1.1: Create a C++ class
+
+- class to customize the actions of this service in code
+- In Unreal > Add New > New C++ class > show all classes > BTService_BlackboardBase > BTService_PlayerLocation
+
+- Add a constructor function
+- Add a tick function
+
+BTService_PlayerLocation.h
+```cpp
+public:
+	//Contructor - which is the name of the class
+	UBTService_PlayerLocation();
+protected:
+	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
+```
+
+- Define the constructor function and give the node a name
+- Define the tick function: For every tick, get the updated player location
+	- In cpp > Get Player Pawn > Get blackboard component > Get Selected Blackboard key > get actor location
+	
+BTService_PlayerLocation.cpp
+```cpp
+UBTService_PlayerLocation::UBTService_PlayerLocation()
+{
+    NodeName = "Update Player Location";
+}
+
+//update next tick interval if the code passes through this node in the behavior tree
+void UBTService_PlayerLocation::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
+{
+    Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
+
+    APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+
+    if (PlayerPawn == nullptr)
+    {
+        return;
+    }
+
+    OwnerComp.GetBlackboardComponent()->SetValueAsVector(GetSelectedBlackboardKey(), PlayerPawn->GetActorLocation());
+}
+```
+
+####### 2.4.5.1.2.1.2: Set the class in our behavior tree
+
+- In our Behavior tree, include this custom service in the Chase node > right click on the Chase node > add service > Player Location > the service will be named "Update Player Location" > change its BlackboardKey variable to "LastKnownPlayerLocation"
+
 
 #### Difference between BTTasks and BTServices
 	- Tasks are used for descrete action which the AI does and stops. Eg. Move to, Shoot once and stop etc
