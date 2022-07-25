@@ -734,7 +734,15 @@ void AShooterAIController::BeginPlay()
 
 - Logic: If AI sees player, run towards him. If it doesn't, investigate moving to the player's last know location
 
-#### 2.4.1: Update player location if seen
+#### Custom Tasks and Custom Services:
+- Custom Tasks and Custom Services allow us to perform any action defined in code when a specific node in our behavior tree is activated
+- Custom Tasks and Services will perform this actio and update whatever blackboard variable is assigned to the Task or Service
+
+##### Difference between BTTasks and BTServices
+- Tasks are used for descrete action which the AI does and stops. Eg. Move to, Shoot once and stop etc
+- Services are used for continuous actions that require a lot of memory because they run all the time. Eg. Keep shooting as long as you are seing the player, keep updating the player location constantly so that the AI can keep chasing the player around etc. 
+
+#### 2.4.1: Custom Service: Update player location if seen
 
 - If AI sees player, updated player location in the AI memory
 - In BT_EnemyAI, Behavior Tree section, After Root, include a SELECTOR to shift between behavior nodes
@@ -837,7 +845,7 @@ void UBTService_PlayerLocationIfSeen::TickNode(UBehaviorTreeComponent& OwnerComp
  - Right click on the Chase sequence > Add a decorator of type Blackboard > call it "Can See Player?" > in details > Blackboard > key query = is set > blackboard key = PlayerLocation
  	- Blackboard condition node: only executes the sequence based on a condition related to a blackboard variable: if PlayerLocation is set
 
-#### 2.4.3: Update Player Location / LastKnownPlayerLocation
+#### 2.4.3: Custom Service: Update Player Location > LastKnownPlayerLocation variable
 
 - Create a C++ class to customize the actions of this service in code
 - In Unreal > Add New > New C++ class > show all classes > BTService_BlackboardBase > BTService_PlayerLocation
@@ -984,7 +992,7 @@ EBTNodeResult::Type UMyBTTask_ClearBlackboardValue::ExecuteTask(
 
 ![image](https://user-images.githubusercontent.com/12215115/173561901-6d567be1-82f5-46dc-abcd-96330d11e22c.png)
 
- ### 2.4.5: Shoot
+ ### 2.4.5: Custom Task: Shoot
   
   - In Unreal > Add New > New C++ class > select BTTaskNode > rename to BTTask_Shoot
 
@@ -1071,10 +1079,6 @@ EBTNodeResult::Type UBTTask_Shoot::ExecuteTask(
 - In Unreal > BT_EnemyAI > in the Chase node > right click and select add Service > Default Focus > in Details > Blackboard key > select the Player variable
 	
 ![image](https://user-images.githubusercontent.com/12215115/173563080-e1b2bd95-5e4c-4cda-854a-0da020490cc1.png)
-
-#### Difference between BTTasks and BTServices
-- Tasks are used for descrete action which the AI does and stops. Eg. Move to, Shoot once and stop etc
-- Services are used for continuous actions that require a lot of memory because they run all the time. Eg. Keep shooting as long as you are seing the player, keep updating the player location constantly so that the AI can keep chasing the player around etc. 
 	
 
 # ITERATION 3: Game Mode and Effects
