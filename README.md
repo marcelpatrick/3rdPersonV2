@@ -1085,6 +1085,7 @@ EBTNodeResult::Type UBTTask_Shoot::ExecuteTask(
 
 
 # 1: Game Mode
+- Craete a new C++ class inheriting from GameModeBase > call it SimpleShooterGameModeBase
 - Will use our custom KillEmAllGameMode that will be derived from and implement the default main game mode, SimpleShooterGameMode
 
 ## 1.1: Pawn Killed function
