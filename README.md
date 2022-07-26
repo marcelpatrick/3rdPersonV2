@@ -60,10 +60,7 @@ Include a Player Start component into the level
 
 # 2: Create Sub-Objects
 
-## 2.1: GameMode
-
 - Create a new BP class derived from BP_ShooterCharacter to be our BP_PlayerShooterCharacter, our main player.
-- Inside the BP_ShooterGameMode, Details, Classes, Default Pawn Class, select our BP_PlayerShooterCharacter.
 
 ## 2.2: Gun
 
@@ -1083,10 +1080,14 @@ EBTNodeResult::Type UBTTask_Shoot::ExecuteTask(
 
 # ITERATION 3: Game Mode and Effects
 
+- Create a new C++ class inheriting from GameModeBase > call it SimpleShooterGameModeBase
 
-# 1: Game Mode
-- Craete a new C++ class inheriting from GameModeBase > call it SimpleShooterGameModeBase
-- Will use our custom KillEmAllGameMode that will be derived from and implement the default main game mode, SimpleShooterGameMode
+- Create a subclass of SimpleShooterGameModeBase: In Unreal > add new > new C++ class > show all classes > SimpleShooterGameModeBase > "KillEmAllGameMode"
+- KillEmAllGameMode will be derived from and implement the default main game mode, SimpleShooterGameMode.
+
+- In Unreal, Create a new BP class inheriting KillEmAllGameMode, call it BP_KillEmAllGameMode
+- In Unreal, Blueprints (button on the top of the screen), GameMode, Select GameMode base class, select our BP_KillEmAllGameMode class.
+- Inside the BP_KillEmAllGameMode, Details, Classes, Default Pawn Class, select our BP_ShooterCharacter.
 
 ## 1.1: Pawn Killed function
 - Define a function for when the actors are killed, PawnKilled() method, to be called from SimpleShooterGameModeBase
@@ -1105,8 +1106,7 @@ void ASimpleShooterGameModeBase::PawnKilled(APawn* PawnKilled)
 }
 ```
 
-- Create a subclass of SimpleShooterGameModeBase: In Unreal > add new > new C++ class > show all classes > SimpleShooterGameModeBase > "KillEmAllGameMode"
-- in KillEmAllGameMode > details > default pawn class > select our main player: BP_PlayerShooterCharacter
+
 - Also implement PawnKilled() in KillEmAllGameMode which will override the virtual PawnKilled() method in the parent SimpleShooterGameModeBase.
 
 ShooterCharacter.cpp
