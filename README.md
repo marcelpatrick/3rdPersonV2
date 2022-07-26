@@ -1106,8 +1106,26 @@ void ASimpleShooterGameModeBase::PawnKilled(APawn* PawnKilled)
 }
 ```
 
-
 - Also implement PawnKilled() in KillEmAllGameMode which will override the virtual PawnKilled() method in the parent SimpleShooterGameModeBase.
+
+KillEmAllGameMode.h
+```cpp
+public:
+	//This method is going to override the virtual method in SimpleShooterGameModeBase
+	virtual void PawnKilled(APawn* PawnKilled) override;
+```
+
+KillEmAllGameMode.cpp
+```cpp
+void AKillEmAllGameMode::PawnKilled(APawn* PawnKilled)
+{
+    Super::PawnKilled(PawnKilled);
+
+    UE_LOG(LogTemp, Warning, TEXT("The Pawn was Killed"));   
+}
+```
+
+- Call PawnKilled() from ShooterCharacter TakeDamage()
 
 ShooterCharacter.cpp
 ```cpp
@@ -1125,25 +1143,6 @@ float AShooterCharacter::TakeDamage(float DamageAmount, struct FDamageEvent cons
 			GameMode->PawnKilled(this);
 		}
 	}
-```
-
-- Override the KillEmAllGameMode so that we can log out when pawn is killed and set this as the default game mode
-
-KillEmAllGameMode.h
-```cpp
-public:
-	//This method is going to override the virtual method in SimpleShooterGameModeBase
-	virtual void PawnKilled(APawn* PawnKilled) override;
-```
-
-KillEmAllGameMode.cpp
-```cpp
-void AKillEmAllGameMode::PawnKilled(APawn* PawnKilled)
-{
-    Super::PawnKilled(PawnKilled);
-
-    UE_LOG(LogTemp, Warning, TEXT("The Pawn was Killed"));   
-}
 ```
 
 - In Unreal > change the BP_ShooterGameMode name to BP_KillEmAllGameMode > Open > Class Settings > Change Parent Class to KillEmAllGameMode 
