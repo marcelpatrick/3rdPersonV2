@@ -1145,8 +1145,7 @@ float AShooterCharacter::TakeDamage(float DamageAmount, struct FDamageEvent cons
 	}
 ```
 
-- In Unreal > change the BP_ShooterGameMode name to BP_KillEmAllGameMode > Open > Class Settings > Change Parent Class to KillEmAllGameMode 
-- In Unreal > BP_KillEmAllGameMode > Class Defaults > Change Default Pawn Class to KillEmAllGameMode 
+- In Unreal > BP_KillEmAllGameMode > Class Defaults > Change Default Pawn Class to BP_ShooterCharacter 
 - In Unreal > click on Blueprints in the top bar > GameMode > Select GameMode Base Class > select BP_KillEmAllGameMode
 
 ## 1.2: Game Over
