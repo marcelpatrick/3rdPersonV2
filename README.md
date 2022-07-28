@@ -1163,6 +1163,13 @@ float AShooterCharacter::TakeDamage(float DamageAmount, struct FDamageEvent cons
 
 - Implement our GameHasEnded() in our player controller class, to be called from EndGame(), and show win or loose widgets into our viewport and restart the game
 
+- Include a public dependency "UMG" in our project build (MyShooter.Build.cs) to support for the Widgets
+
+MyShooter.Build.cs
+```
+PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "AIModule", "GameplayTasks", "UMG" });
+```
+
 ShooterPlayerController.h
 ```cpp
 public: 
