@@ -1162,6 +1162,7 @@ float AShooterCharacter::TakeDamage(float DamageAmount, struct FDamageEvent cons
 ### 1.2.1: GameHasEnded(): WHAT TO DO WHEN GAME HAS ENDED?
 
 - Implement our GameHasEnded() in our player controller class, to be called from EndGame(), and show win or loose widgets into our viewport and restart the game
+- Implement a timer inside GameHasEnded() to call the RestartLevel function from within it after a time range.
 
 - Include a public dependency "UMG" in our project build (MyShooter.Build.cs) to support for the Widgets
 
