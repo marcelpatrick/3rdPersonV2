@@ -1202,7 +1202,94 @@ void AShooterPlayerController::GameHasEnded(class AActor* EndGameFocus, bool bIs
 }
 ```
 
-### 1.2.2: EndGame(): WIN OR LOSE?
+### 1.2.2: PawnKilled(): WHO GOT KILLED?
+
+- Implement and empty EndGame() so that PawnKilled() has something to call temporarily - later EndGame() will be filled
+
+KillEmAllGameMode.h
+```cpp	
+private:
+	void EndGame(bool bIsPlayerWinner);
+	AShooterAIController* ShooterAIController;
+```
+
+KillEmAllGameMode.cpp
+```cpp
+void AKillEmAllGameMode::EndGame(bool bIsPlayerWinner)
+{
+
+}
+```
+
+- Inside ShooterAIController, implement also a IsDead() function to define when the AI is dead.
+- Declare a ShooterCharacter var and call the IsDead() function already implemented inside ShooterCharacter class
+
+ShooterAIController.h
+```cpp
+public:
+	bool IsDead() const;
+```
+
+ShooterAIController.cpp
+```cpp
+bool AShooterAIController::IsDead() const
+{
+    AShooterCharacter* ControlledCharacter = Cast<AShooterCharacter>(GetPawn());
+
+    if (ControlledCharacter != nullptr)
+    {
+        // return true if IsDead() = true
+        return ControlledCharacter->IsDead();
+    }
+    
+    //Also return true if Controlled character is nullptr because then the Pawn has been detached from the controller indicating death
+    return true;
+}
+```
+
+- Implement the PawnKilled() function in KillEmAllGameMode to define which pawn was killed (the player or all the enemies) and call EndGame() passing the result of this function as a parameter.
+
+KillEmAllGameMode.h
+```cpp
+public:
+	//This method is going to override the virtual method in SimpleShooterGameModeBase
+	virtual void PawnKilled(APawn* PawnKilled) override;
+```
+
+KillEmAllGameMode.cpp
+```cpp
+void AKillEmAllGameMode::PawnKilled(APawn* PawnKilled)
+{
+    Super::PawnKilled(PawnKilled);
+
+    UE_LOG(LogTemp, Warning, TEXT("The Pawn was Killed"));
+    //In Unreal, change the BP_ShooterGameMode name to BP_KillEmAllGameMode > Open > Class Settings > Change Parent Class to KillEmAllGameMode
+        //click on Blueprints in the top bar > GameMode > Select GameMode Base Class > select BP_KillEmAllGameMode
+
+    //GAME OVER: Check if the killed pawn is a player controller (if the player has died) - Lose scenario
+    APlayerController* PlayerController = Cast<APlayerController>(PawnKilled->GetController());
+
+    if (PlayerController != nullptr)
+    {
+        EndGame(false);
+    }
+
+    //WIN GAME: For loop over all shooterAIs in the world and check if any of them are not dead. then game is not over, so return to exit out of this function and stop executing it
+    //If we iterate over all AI and they are all dead then end game - we won
+    for (AShooterAIController* Controller : TActorRange<AShooterAIController>(GetWorld()))
+    {
+        bool bIsPlayerController = Controller->IsPlayerController();
+
+        if (!Controller->IsDead())
+        {
+            return; 
+        }
+    }
+    EndGame(true);
+}
+```
+
+### 1.2.3: EndGame(): WIN OR LOSE?
 
 - Implement EndGame() to end the game define win and loose conditions. Win (all enemy pawns were killed), loose (player pawn was killed). Then call GameHasEnded() passing the result of this function as a parameter.
 
@@ -1265,49 +1352,6 @@ bool AShooterAIController::IsDead() const
 }
 ```
 
-### 1.2.3: PawnKilled(): WHO GOT KILLED?
-
-- Implement the PawnKilled() function in KillEmAllGameMode to define which pawn was killed (the player or all the enemies) and call EndGame() passing the result of this function as a parameter.
-
-KillEmAllGameMode.h
-```cpp
-public:
-	//This method is going to override the virtual method in SimpleShooterGameModeBase
-	virtual void PawnKilled(APawn* PawnKilled) override;
-```
-
-KillEmAllGameMode.cpp
-```cpp
-void AKillEmAllGameMode::PawnKilled(APawn* PawnKilled)
-{
-    Super::PawnKilled(PawnKilled);
-
-    UE_LOG(LogTemp, Warning, TEXT("The Pawn was Killed"));
-    //In Unreal, change the BP_ShooterGameMode name to BP_KillEmAllGameMode > Open > Class Settings > Change Parent Class to KillEmAllGameMode
-        //click on Blueprints in the top bar > GameMode > Select GameMode Base Class > select BP_KillEmAllGameMode
-
-    //GAME OVER: Check if the killed pawn is a player controller (if the player has died) - Lose scenario
-    APlayerController* PlayerController = Cast<APlayerController>(PawnKilled->GetController());
-
-    if (PlayerController != nullptr)
-    {
-        EndGame(false);
-    }
-
-    //WIN GAME: For loop over all shooterAIs in the world and check if any of them are not dead. then game is not over, so return to exit out of this function and stop executing it
-    //If we iterate over all AI and they are all dead then end game - we won
-    for (AShooterAIController* Controller : TActorRange<AShooterAIController>(GetWorld()))
-    {
-        bool bIsPlayerController = Controller->IsPlayerController();
-
-        if (!Controller->IsDead())
-        {
-            return; 
-        }
-    }
-    EndGame(true);
-}
-```
 
 # 2: Effects:
 
