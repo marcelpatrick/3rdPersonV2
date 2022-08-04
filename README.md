@@ -1133,15 +1133,23 @@ float AShooterCharacter::TakeDamage(float DamageAmount, struct FDamageEvent cons
 {
 	if (IsDead())
 	{
-		//Get a hold of our game mode (the basic game mode that the game will start with - simple shooter) and call the killed pawn
-			//And store it in a variable so that we can later switch the game mode type
+		UE_LOG(LogTemp, Warning, TEXT("IS DEAD"));
+
 		ASimpleShooterGameModeBase* GameMode = GetWorld()->GetAuthGameMode<ASimpleShooterGameModeBase>();
 
 		if (GameMode != nullptr)
-		{	
-			//Make the game mode aware that this pawn was killed
+		{
 			GameMode->PawnKilled(this);
 		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("GameMode == nullptr"));
+		}
+
+		//Stop the character from being controlled - moved.
+    		DetachFromControllerPendingDestroy();
+		//Switch off capsule collision 
+    		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision); 
 	}
 ```
 
