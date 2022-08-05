@@ -1164,70 +1164,9 @@ float AShooterCharacter::TakeDamage(float DamageAmount, struct FDamageEvent cons
 - In Unreal > create a new blueprint class based on our C++ ShooterPlayerController > "BP_ShooterPlayerController"
 - In Unreal > In BP_KillEmAllGameMode > Details > Classes > PlayerControllerClass > change to BP_ShooterPlayerController
 
-- ACTION ORDER: PawnKilled() WHO GOT KILLED? will call > EndGame() WIN OR LOOSE? will call > GameHasEnded() WHAT TO DO WHEN GAME HAS ENDED?
-- CODE IMPLEMENTATIO ORDER: GameHasEnded() will be called by > EndGame() will be called by > PawnKilled()
+- ACTION ORDER: TakeDamage() WHO GOT SHOT? will call > IsDead() IS THE SHOT PLAYER DEAD? and PawnKilled() WHO GOT KILLED? will call > EndGame() WIN OR LOOSE? will call > GameHasEnded() WHAT TO DO WHEN GAME HAS ENDED?
 
-### 1.2.1: GameHasEnded(): WHAT TO DO WHEN GAME HAS ENDED?
-
-- Implement our GameHasEnded() in our player controller class, to be called from EndGame(), and show win or loose widgets into our viewport and restart the game
-- Implement a timer inside GameHasEnded() to call the RestartLevel function from within it after a time range.
-
-- Include a public dependency "UMG" in our project build (MyShooter.Build.cs) to support for the Widgets
-
-MyShooter.Build.cs
-```
-PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "AIModule", "GameplayTasks", "UMG" });
-```
-
-ShooterPlayerController.h
-```cpp
-public: 
-	virtual void GameHasEnded(class AActor* EndGameFocus = nullptr, bool bIsWinner = false) override;
-
-private:
-	UPROPERTY(EditAnywhere)
-	float RestartDelay = 5.f;
-
-	FTimerHandle RestartTimer;
-
-	UPROPERTY(EditAnywhere)
-	UUserWidget* HUD;
-```
-
-ShooterPlayerController.cpp
-```cpp
-void AShooterPlayerController::GameHasEnded(class AActor* EndGameFocus, bool bIsWinner)
-{
-    Super::GameHasEnded(EndGameFocus, bIsWinner);
-    
-    //Set timer to count 5 seconds after we are killed and then restart the level
-    GetWorldTimerManager().SetTimer(
-        RestartTimer, /* TimerHandle: can be used to pause (and resume) the countdown, query or change the amount of time remaining, or even cancel the timer altogether*/
-        this, /* objecto to be called*/ 
-        &APlayerController::RestartLevel, /*the address of the function we want to delay with this timer*/
-        RestartDelay /*amount of time for that timer to delay*/
-        );
-}
-```
-
-### 1.2.2: PawnKilled(): WHO GOT KILLED?
-
-- Implement and empty EndGame() so that PawnKilled() has something to call temporarily - later EndGame() will be filled
-
-KillEmAllGameMode.h
-```cpp	
-private:
-	void EndGame(bool bIsPlayerWinner);
-	AShooterAIController* ShooterAIController;
-```
-
-KillEmAllGameMode.cpp
-```cpp
-void AKillEmAllGameMode::EndGame(bool bIsPlayerWinner)
-{
-
-}
-```
+### 1.2.1: PawnKilled(): WHO GOT KILLED?
 
 - Inside ShooterAIController, implement also a IsDead() function to define when the AI is dead.
 - Declare a ShooterCharacter var and call the IsDead() function already implemented inside ShooterCharacter class
@@ -1256,6 +1195,7 @@ bool AShooterAIController::IsDead() const
 ```
 
 - Implement the PawnKilled() function in KillEmAllGameMode to define which pawn was killed (the player or all the enemies) and call EndGame() passing the result of this function as a parameter.
+- EndGame() will be implemented on the next step
 
 KillEmAllGameMode.h
 ```cpp
@@ -1297,9 +1237,10 @@ void AKillEmAllGameMode::PawnKilled(APawn* PawnKilled)
 }
 ```
 
-### 1.2.3: EndGame(): WIN OR LOSE?
+### 1.2.2: EndGame(): WIN OR LOSE?
 
-- Implement EndGame() to end the game define win and loose conditions. Win (all enemy pawns were killed), loose (player pawn was killed). Then call GameHasEnded() passing the result of this function as a parameter.
+- Implement EndGame() to end the game define win and loose conditions. Win (all enemy pawns were killed), loose (player pawn was killed). 
+- Then call GameHasEnded() passing the result of this function as a parameter. GameHasEnded() will be implemented on the next step.
 
 KillEmAllGameMode.h
 ```cpp	
@@ -1308,7 +1249,7 @@ private:
 	AShooterAIController* ShooterAIController;
 ```
 
-- Since we call GameHasEnded() from within a actor controller, we have to know which specific controller won. If the player, the player controller has to call GameHasEnded() - win condition. If the AI, the AI controller has to call GameHasEnded() - lose condition.
+- Since we call GameHasEnded() from within an actor controller, we have to know which specific controller won. If it was the player, the player controller has to call GameHasEnded() - win condition. If the AI, the AI controller has to call GameHasEnded() - lose condition.
 
 KillEmAllGameMode.cpp
 ```cpp
@@ -1357,6 +1298,48 @@ bool AShooterAIController::IsDead() const
     }
     //if there is not a pawn controlling this character it means that it is dead
     return true;
+}
+```
+
+### 1.2.3: GameHasEnded(): WHAT TO DO WHEN GAME HAS ENDED?
+
+- Implement our GameHasEnded() in our player controller class, to be called from EndGame(), and show win or loose widgets into our viewport and restart the game
+- Implement a timer inside GameHasEnded() to call the RestartLevel function from within it after a time range.
+- Include a public dependency "UMG" in our project build (MyShooter.Build.cs) to support for the Widgets
+
+MyShooter.Build.cs
+```
+PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "AIModule", "GameplayTasks", "UMG" });
+```
+
+ShooterPlayerController.h
+```cpp
+public: 
+	virtual void GameHasEnded(class AActor* EndGameFocus = nullptr, bool bIsWinner = false) override;
+
+private:
+	UPROPERTY(EditAnywhere)
+	float RestartDelay = 5.f;
+
+	FTimerHandle RestartTimer;
+
+	UPROPERTY(EditAnywhere)
+	UUserWidget* HUD;
+```
+
+ShooterPlayerController.cpp
+```cpp
+void AShooterPlayerController::GameHasEnded(class AActor* EndGameFocus, bool bIsWinner)
+{
+    Super::GameHasEnded(EndGameFocus, bIsWinner);
+    
+    //Set timer to count 5 seconds after we are killed and then restart the level
+    GetWorldTimerManager().SetTimer(
+        RestartTimer, /* TimerHandle: can be used to pause (and resume) the countdown, query or change the amount of time remaining, or even cancel the timer altogether*/
+        this, /* objecto to be called*/ 
+        &APlayerController::RestartLevel, /*the address of the function we want to delay with this timer*/
+        RestartDelay /*amount of time for that timer to delay*/
+        );
 }
 ```
 
