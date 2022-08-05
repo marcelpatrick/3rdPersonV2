@@ -1164,7 +1164,7 @@ float AShooterCharacter::TakeDamage(float DamageAmount, struct FDamageEvent cons
 - In Unreal > create a new blueprint class based on our C++ ShooterPlayerController > "BP_ShooterPlayerController"
 - In Unreal > In BP_KillEmAllGameMode > Details > Classes > PlayerControllerClass > change to BP_ShooterPlayerController
 
-- ACTION ORDER: TakeDamage() WHO GOT SHOT? will call > IsDead() IS THE SHOT PLAYER DEAD? and PawnKilled() WHO GOT KILLED? will call > EndGame() WIN OR LOOSE? will call > GameHasEnded() WHAT TO DO WHEN GAME HAS ENDED?
+- ACTION ORDER: TakeDamage() WHAT DAMAGE TO APPLY? will call > IsDead() IS THE SHOT PLAYER DEAD? and PawnKilled() WHO GOT KILLED? will call > EndGame() WIN OR LOOSE? will call > GameHasEnded() WHAT TO DO WHEN GAME HAS ENDED?
 
 ### 1.2.1: PawnKilled(): WHO GOT KILLED?
 
