@@ -1276,31 +1276,6 @@ void AKillEmAllGameMode::EndGame(bool bIsPlayerWinner)
 }
 ```
 
-- Create a method to define whether a AI is dead
-
-ShooterAIController.h
-```cpp
-public
-	bool IsDead() const;
-```
-
-ShooterAIController.cpp
-```cpp
-//Check if the AI is dead
-bool AShooterAIController::IsDead() const
-{
-    //Check if the pawn is a shooter character type
-    AShooterCharacter* ControlledCharacter = Cast<AShooterCharacter>(GetPawn());
-
-    if (ControlledCharacter != nullptr)
-    {
-        return ControlledCharacter->IsDead();
-    }
-    //if there is not a pawn controlling this character it means that it is dead
-    return true;
-}
-```
-
 ### 1.2.3: GameHasEnded(): WHAT TO DO WHEN GAME HAS ENDED?
 
 - Implement our GameHasEnded() in our player controller class, to be called from EndGame(), and show win or loose widgets into our viewport and restart the game
