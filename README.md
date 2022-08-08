@@ -1323,8 +1323,8 @@ void AShooterPlayerController::GameHasEnded(class AActor* EndGameFocus, bool bIs
 
 ## 2.1: Widgets:
 
-- In Unreal > Add New > User interface > Widget blueprint > "WBP_LoseScreen" / "WBP_WinScreen" / "WBP_HUDScreen"
-- inside WBP_LoseScreen / WBP_LoseScreen > add a text component to the screen > customize it
+- Craete 3 new widgets: In Unreal > Add New > User interface > Widget blueprint > "WBP_LoseScreen" / "WBP_WinScreen" / "WBP_HUDScreen"
+- inside WBP_LoseScreen / WBP_WinScreen > add a text component to the screen > customize it
 - inside WBP_HUD > add crosshair and a progress bar and customize them > start percentage of progress bar as 1
 
 ![image](https://user-images.githubusercontent.com/12215115/172826273-76efb0aa-52d8-4cf5-8e1a-b10634d81dc9.png)
