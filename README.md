@@ -401,6 +401,7 @@ Use Try Get Pawn Owner to get the pawn object (BP_ShooterCharacter) and get info
 - ![image](https://user-images.githubusercontent.com/12215115/173814563-3e1e0eeb-3ba3-497d-89df-c2b7fa0021c0.png)
 
 - In the Dead node: Add Play Death_Forward animation > Output animation pose
+- in details > Settings > uncheck loop animation
 - ![image](https://user-images.githubusercontent.com/12215115/173813490-235e6886-4523-4567-971d-e1380f1d24a9.png)
 	
 - In Dead to Alive: Get IsDead bool > NOT > Result
