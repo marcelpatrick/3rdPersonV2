@@ -1280,7 +1280,6 @@ void AKillEmAllGameMode::EndGame(bool bIsPlayerWinner)
 
 - Implement our GameHasEnded() in our player controller class, to be called from EndGame(), and show win or loose widgets into our viewport and restart the game
 - Implement a timer inside GameHasEnded() to call the RestartLevel function from within it after a time range.
-- Include a public dependency "UMG" in our project build (MyShooter.Build.cs) to support for the Widgets
 
 MyShooter.Build.cs
 ```
@@ -1323,22 +1322,25 @@ void AShooterPlayerController::GameHasEnded(class AActor* EndGameFocus, bool bIs
 
 ## 2.1: Widgets:
 
+- Include a public dependency "UMG" in our project build (MyShooter.Build.cs) to support for the Widgets
 - Craete 3 new widgets: In Unreal > Add New > User interface > Widget blueprint > "WBP_LoseScreen" / "WBP_WinScreen" / "WBP_HUDScreen"
 - inside WBP_LoseScreen / WBP_WinScreen > add a text component to the screen > customize it
-- inside WBP_HUD > add crosshair and a progress bar and customize them > start percentage of progress bar as 1
 
 ![image](https://user-images.githubusercontent.com/12215115/172826273-76efb0aa-52d8-4cf5-8e1a-b10634d81dc9.png)
 ![image](https://user-images.githubusercontent.com/12215115/172828233-c2afe164-600c-4843-a26f-1bf6af47cf4a.png)
+
+- In Unreal > BP_ShooterPlayerController > Details > ShooterPlayerController > Lose Screen Class > select WBP_LoseScreen
+- In Unreal > BP_ShooterPlayerController > Details > ShooterPlayerController > Win Screen Class > select WBP_WinScreen
+
+- inside WBP_HUD > add crosshair and a progress bar and customize them > start percentage of progress bar as 1
+
 ![image](https://user-images.githubusercontent.com/12215115/172828294-22bf847e-c82c-4df7-ab71-d5fe4be2d1ce.png)
 
 - Define which widget class will be spawned
+
 ShooterPlayerController.h
 ```cpp
 public: 
-	UFUNCTION(BlueprintPure)
-	float GetHealthPercent() const;
-	
-protected:
 	virtual void BeginPlay() override;
 	
 private:
@@ -1353,70 +1355,65 @@ private:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UUserWidget> HUDClass; 
 	
+	UUserWidget* WinWidget; 
+
+	UUserWidget* LoseWidget; 
+	
 	UPROPERTY(EditAnywhere)
 	UUserWidget* HUD;
 ```
 
 - Spawn the widgets in the world
+
 ShooterPlayerController.cpp
 ```cpp
 void AShooterPlayerController::BeginPlay()
 {
     Super::BeginPlay();
 
-    HUD = CreateWidget(this, HUDClass);
-    if (HUD != nullptr)
-    {
-        HUD->AddToViewport();
-    }
-    
+    HUD = CreateWidget(this, HUDWidgetClass);
+    HUD->AddToViewport();
 }
 
+void AShooterPlayerController::GameHasEnded(AActor* EndGameFocus, bool bIsWinner)
+{
+    Super::GameHasEnded(EndGameFocus, bIsWinner);
+
+    if (bIsWinner)
+    {
+        WinWidget = CreateWidget(this, WinWidgetClass);
+        WinWidget->AddToViewport();
+    }
+    else
+    {
+        LoseWidget = CreateWidget(this, LoseWidgetClass);
+        LoseWidget->AddToViewport(); 
+    }
+}
+```
+
+- Create the code logic to update the progress bar based on player's health
+
+ShooterCharacter.h
+```cpp
+public:
+	UFUNCTION(BlueprintPure)
+	float GetHealthPercent() const;
+```
+
+ShooterCharacter.cpp
+```cpp
 float AShooterCharacter::GetHealthPercent() const
 {
 	return Health/MaxHealth;
 }
-
-void AShooterPlayerController::GameHasEnded(class AActor* EndGameFocus, bool bIsWinner)
-{
-    Super::GameHasEnded(EndGameFocus, bIsWinner);
-
-    HUD->RemoveFromViewport();
-
-    if (bIsWinner)
-    {
-        //print win widget
-        UUserWidget* WinScreen = CreateWidget(this, WinScreenClass);
-
-        if (WinScreen != nullptr)
-        {
-            WinScreen->AddToViewport();
-        }
-        //In Unreal > BP_ShooterPlayerController > WinScreenClass > select our WBP_WinScreen
-    }
-    else
-    {
-        //print lose widget
-
-        //Spawn Widget
-        UUserWidget* LoseScreen = CreateWidget(
-            this, /*Owning object*/ 
-            LoseScreenClass /*Widget class*/
-            );
-
-        if (LoseScreen != nullptr)
-        {
-            //Print our widget to the screen
-            LoseScreen->AddToViewport();
-        }
-        //In Unreal > BP_ShooterPlayerController > LoseScreenClass > select our WBP_LoseScreen
-    }
-}
 ```
+
 - in WBP_HUD > select the progress bar > details > progress > percent > bind > create biding > rename funciton to "Get Health"
-	- righ click > get Owning player pawn > cast to shooter character > Get health percent > return value
-- Open SimpleShooter.Build.cs > inside PublicDependencyModuleNames > add "UMG"
-- In Unreal > ShooterPlayerController > Details > ShooterPlayerController > Lose Screen Class > select WBP_LoseScreen
+- righ click > get Owning player pawn > cast to shooter character > Get health percent > return value
+
+![image](https://user-images.githubusercontent.com/12215115/183891214-0fcd50e2-6354-4431-9925-e0933a27d0d2.png)
+
 
 ## 2.2: Particles
 
