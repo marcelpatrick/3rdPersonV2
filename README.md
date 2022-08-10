@@ -1087,7 +1087,7 @@ EBTNodeResult::Type UBTTask_Shoot::ExecuteTask(
 
 - In Unreal, Create a new BP class inheriting KillEmAllGameMode, call it BP_KillEmAllGameMode
 - In Unreal, Blueprints (button on the top of the screen), GameMode, Select GameMode base class, select our BP_KillEmAllGameMode class.
-- Inside the BP_KillEmAllGameMode, Details, Classes, Default Pawn Class, select our BP_ShooterCharacter.
+- Inside the BP_KillEmAllGameMode, Details, Classes, Default Pawn Class, select our BP_PlayerShooterCharacter.
 
 ## 1.1: Pawn Killed function
 - Define a function for when the actors are killed, PawnKilled() method, to be called from SimpleShooterGameModeBase
