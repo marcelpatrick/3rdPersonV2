@@ -1483,7 +1483,8 @@ void AGun::PullTrigger()
 ### 2.3.1: Sound Cues: randomize sounds
 
 - In Unreal > add new > Sounds > Sound Cues > A_RifleShot_Cue
-- in unreal > content folder > select all sound wave files to be included > A_RifleShot_Cue > right click > select Random: multiple WAVs > link to Modulator > link to Output
+- in unreal > content folder > select all sound wave files to be included > A_RifleShot_Cue > right click > select Random:
+- Select multiple WAVs from Unreal content folder and drag and drop into A_RifleShot_Cue > random > link to Modulator > link to Output
 - details > random > select randomize without replacement
 - details > modulation > select min and max pitch
 
